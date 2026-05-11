@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import {
   cancelarAgendamento,
   confirmarAgendamento,
@@ -36,6 +36,22 @@ const STATUS_CLASSNAMES: Record<StatusAgendamento, string> = {
 }
 
 const HOURS = Array.from({ length: 15 }, (_, index) => index + 7)
+
+function agendamentosNoSlotHora(lista: Agendamento[], dia: Date, hour: number): Agendamento[] {
+  return lista.filter((agendamento) => {
+    const d = parseDateInLocal(agendamento.data)
+    return (
+      d.getFullYear() === dia.getFullYear() &&
+      d.getMonth() === dia.getMonth() &&
+      d.getDate() === dia.getDate() &&
+      d.getHours() === hour
+    )
+  })
+}
+
+function slotDiaKey(dia: Date) {
+  return `${dia.getFullYear()}-${dia.getMonth()}-${dia.getDate()}`
+}
 
 function parseDateInLocal(dateISO: string) {
   return new Date(dateISO)
@@ -489,73 +505,84 @@ export default function AgendamentosPage() {
           ) : null}
 
           <div className="weekly-grid-wrapper">
-            <div className="weekly-grid">
-              <div className="weekly-time-column">
-                <div className="weekly-column-header">Horários</div>
-                {HOURS.map((hour) => (
-                  <div key={hour} className="weekly-hour-cell">
-                    {String(hour).padStart(2, '0')}:00
-                  </div>
-                ))}
-              </div>
-
+            <div className="weekly-grid" role="grid" aria-label="Grade semanal por horário">
+              <div className="weekly-grid-corner">Horários</div>
               {diasSemana.map((dia) => {
                 const isToday = getStartOfDay(dia).getTime() === getStartOfDay(new Date()).getTime()
                 return (
-                  <div key={dia.toISOString()} className="weekly-day-column">
-                    <div className={isToday ? 'weekly-column-header today-column' : 'weekly-column-header'}>
-                      {new Intl.DateTimeFormat('pt-BR', { weekday: 'short', day: '2-digit' }).format(dia)}
-                    </div>
-                    {HOURS.map((hour) => (
-                      <div key={`${dia.toISOString()}-${hour}`} className="weekly-hour-cell" />
-                    ))}
+                  <div
+                    key={slotDiaKey(dia)}
+                    role="columnheader"
+                    className={
+                      isToday ? 'weekly-grid-day-header today-column' : 'weekly-grid-day-header'
+                    }
+                  >
+                    {new Intl.DateTimeFormat('pt-BR', { weekday: 'short', day: '2-digit' }).format(dia)}
+                  </div>
+                )
+              })}
 
-                    <div className="weekly-events-layer">
-                      {agendamentosSemana
-                        .filter((agendamento) => {
-                          const date = parseDateInLocal(agendamento.data)
-                          return (
-                            date.getDate() === dia.getDate() &&
-                            date.getMonth() === dia.getMonth() &&
-                            date.getFullYear() === dia.getFullYear()
-                          )
-                        })
-                        .map((agendamento) => {
-                          const date = parseDateInLocal(agendamento.data)
-                          const startMinutes = (date.getHours() - 7) * 60 + date.getMinutes()
-                          const top = (startMinutes / (HOURS.length * 60)) * 100
+              {HOURS.map((hour) => (
+                <Fragment key={hour}>
+                  <div className="weekly-grid-time-label">{String(hour).padStart(2, '0')}:00</div>
+                  {diasSemana.map((dia) => {
+                    const apps = agendamentosNoSlotHora(agendamentosSemana, dia, hour)
+                    const slotKey = `slot-${slotDiaKey(dia)}-${hour}`
 
+                    if (apps.length === 0) {
+                      return <div key={slotKey} className="weekly-slot-empty" role="gridcell" />
+                    }
+
+                    if (apps.length === 1) {
+                      const agendamento = apps[0]
+                      const date = parseDateInLocal(agendamento.data)
+                      const horaFmt = new Intl.DateTimeFormat('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      }).format(date)
+                      return (
+                        <button
+                          key={slotKey}
+                          type="button"
+                          role="gridcell"
+                          className={`weekly-slot weekly-slot-filled ${STATUS_CLASSNAMES[agendamento.status]}`}
+                          aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}.`}
+                          onClick={() => setSelectedAgendamento(agendamento)}
+                        >
+                          <strong className="weekly-slot-time">{horaFmt}</strong>
+                          <span className="weekly-slot-paciente">{getPacienteNome(agendamento)}</span>
+                          <span className="weekly-slot-medico">{getMedicoNome(agendamento)}</span>
+                        </button>
+                      )
+                    }
+
+                    return (
+                      <div key={slotKey} className="weekly-slot-stack" role="gridcell">
+                        {apps.map((agendamento) => {
+                          const date = parseDateInLocal(agendamento.data)
+                          const horaFmt = new Intl.DateTimeFormat('pt-BR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          }).format(date)
                           return (
                             <button
                               key={agendamento.id}
                               type="button"
-                              className={`weekly-event ${STATUS_CLASSNAMES[agendamento.status]}`}
-                              style={{ top: `${top}%` }}
-                              aria-label={`${new Intl.DateTimeFormat('pt-BR', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              }).format(date)}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}.`}
+                              className={`weekly-slot-item ${STATUS_CLASSNAMES[agendamento.status]}`}
+                              aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}.`}
                               onClick={() => setSelectedAgendamento(agendamento)}
                             >
-                              <strong>
-                                {new Intl.DateTimeFormat('pt-BR', {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                }).format(date)}
-                              </strong>
-                              <span className="weekly-event-line weekly-event-paciente">
-                                {getPacienteNome(agendamento)}
-                              </span>
-                              <span className="weekly-event-line weekly-event-medico">
-                                {getMedicoNome(agendamento)}
-                              </span>
+                              <strong className="weekly-slot-time">{horaFmt}</strong>
+                              <span className="weekly-slot-paciente">{getPacienteNome(agendamento)}</span>
+                              <span className="weekly-slot-medico">{getMedicoNome(agendamento)}</span>
                             </button>
                           )
                         })}
-                    </div>
-                  </div>
-                )
-              })}
+                      </div>
+                    )
+                  })}
+                </Fragment>
+              ))}
             </div>
           </div>
         </section>

@@ -367,105 +367,163 @@
 .weekly-grid {
   min-width: 980px;
   display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
-}
-
-.weekly-time-column,
-.weekly-day-column {
-  position: relative;
-  min-width: 0;
-}
-
-.weekly-day-column {
+  grid-template-columns: 88px repeat(7, minmax(0, 1fr));
+  grid-template-rows: 48px repeat(15, 52px);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
   overflow: hidden;
+  background: var(--bg-elevated);
 }
 
-.weekly-column-header {
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border-bottom: 1px solid var(--line-soft);
+.weekly-grid-corner,
+.weekly-grid-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
   border-right: 1px solid var(--line-soft);
-  font-size: 0.84rem;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 0.82rem;
   color: var(--text-secondary);
+  font-weight: 600;
 }
 
-.today-column {
+.weekly-grid-corner {
+  font-size: 0.78rem;
+}
+
+.weekly-grid-day-header.today-column {
   background: #effadc;
   color: #324a20;
-  font-weight: 700;
 }
 
-.weekly-hour-cell {
-  height: 48px;
+.weekly-grid-time-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
-  border-bottom: 1px dashed #deeadc;
-  border-right: 1px solid var(--line-soft);
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  display: grid;
-  place-items: center;
-}
-
-.weekly-events-layer {
-  position: absolute;
-  left: 3px;
-  right: 3px;
-  top: 48px;
-  bottom: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.weekly-event {
-  --weekly-slots: 15;
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  height: calc(100% / var(--weekly-slots) - 3px);
-  max-height: calc(100% / var(--weekly-slots) - 3px);
+  min-width: 0;
   min-height: 0;
-  border-radius: 8px;
+  border-right: 1px solid var(--line-soft);
+  border-bottom: 1px dashed #deeadc;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  background: #fafcf8;
+}
+
+.weekly-slot-empty {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid var(--line-soft);
+  border-bottom: 1px dashed #deeadc;
+  background: #fdfefd;
+}
+
+.weekly-slot.weekly-slot-filled {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0.2rem 0.35rem 0.22rem;
   border: none;
-  text-align: left;
+  border-right: 1px solid var(--line-soft);
+  border-bottom: 1px dashed #deeadc;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  gap: 0.04rem;
-  padding: 0.12rem 0.28rem 0.14rem;
-  color: #0f1510;
-  box-shadow: 0 2px 6px rgba(20, 29, 19, 0.12);
-  overflow: hidden;
-  pointer-events: auto;
+  gap: 0.06rem;
   min-width: 0;
+  min-height: 0;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  color: #0f1510;
 }
 
-.weekly-event strong {
-  font-size: 0.58rem;
-  line-height: 1.05;
+.weekly-slot-time {
+  font-size: 0.62rem;
+  line-height: 1.1;
   flex-shrink: 0;
 }
 
-.weekly-event-line {
-  font-size: 0.52rem;
-  line-height: 1.08;
+.weekly-slot-paciente {
+  font-size: 0.56rem;
+  line-height: 1.12;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
 }
 
-.weekly-event-paciente {
-  font-weight: 600;
+.weekly-slot-medico {
+  font-size: 0.52rem;
+  line-height: 1.1;
+  color: #2d3d30;
+  opacity: 0.95;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
-.weekly-event-medico {
-  color: #2d3d30;
-  opacity: 0.92;
+.weekly-slot.weekly-slot-filled.status-agendado,
+.weekly-slot-item.status-agendado {
+  background: rgba(74, 143, 255, 0.26);
+}
+
+.weekly-slot.weekly-slot-filled.status-confirmado,
+.weekly-slot-item.status-confirmado {
+  background: rgba(51, 176, 109, 0.28);
+}
+
+.weekly-slot.weekly-slot-filled.status-cancelado,
+.weekly-slot-item.status-cancelado {
+  background: rgba(219, 78, 78, 0.24);
+}
+
+.weekly-slot.weekly-slot-filled.status-realizado,
+.weekly-slot-item.status-realizado {
+  background: rgba(36, 90, 58, 0.26);
+}
+
+.weekly-slot-stack {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  border-right: 1px solid var(--line-soft);
+  border-bottom: 1px dashed #deeadc;
+  overflow: hidden;
+}
+
+.weekly-slot-item {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0.12rem 0.3rem;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.04rem;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  color: #0f1510;
+}
+
+.weekly-slot-item + .weekly-slot-item {
+  border-top: 1px solid rgba(20, 29, 19, 0.12);
 }
 
 .modal-overlay {
