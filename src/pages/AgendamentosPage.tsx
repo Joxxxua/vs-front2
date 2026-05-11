@@ -531,9 +531,10 @@ export default function AgendamentosPage() {
                               type="button"
                               className={`weekly-event ${STATUS_CLASSNAMES[agendamento.status]}`}
                               style={{ top: `${top}%` }}
-                              title={`Paciente: ${getPacienteNome(agendamento)} | Médico: ${getMedicoNome(
-                                agendamento,
-                              )}`}
+                              aria-label={`${new Intl.DateTimeFormat('pt-BR', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              }).format(date)}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}.`}
                               onClick={() => setSelectedAgendamento(agendamento)}
                             >
                               <strong>

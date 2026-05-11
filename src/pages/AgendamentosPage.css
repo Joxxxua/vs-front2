@@ -373,6 +373,11 @@
 .weekly-time-column,
 .weekly-day-column {
   position: relative;
+  min-width: 0;
+}
+
+.weekly-day-column {
+  overflow: hidden;
 }
 
 .weekly-column-header {
@@ -392,7 +397,8 @@
 }
 
 .weekly-hour-cell {
-  height: 46px;
+  height: 48px;
+  box-sizing: border-box;
   border-bottom: 1px dashed #deeadc;
   border-right: 1px solid var(--line-soft);
   font-size: 0.78rem;
@@ -403,42 +409,54 @@
 
 .weekly-events-layer {
   position: absolute;
-  left: 5px;
-  right: 5px;
+  left: 3px;
+  right: 3px;
   top: 48px;
   bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .weekly-event {
+  --weekly-slots: 15;
   position: absolute;
   left: 0;
   right: 0;
-  min-height: 52px;
-  max-height: 78px;
-  border-radius: 10px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  height: calc(100% / var(--weekly-slots) - 3px);
+  max-height: calc(100% / var(--weekly-slots) - 3px);
+  min-height: 0;
+  border-radius: 8px;
   border: none;
   text-align: left;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  gap: 0.06rem;
-  padding: 0.22rem 0.4rem 0.28rem;
+  gap: 0.04rem;
+  padding: 0.12rem 0.28rem 0.14rem;
   color: #0f1510;
-  box-shadow: 0 6px 12px rgba(20, 29, 19, 0.1);
+  box-shadow: 0 2px 6px rgba(20, 29, 19, 0.12);
+  overflow: hidden;
+  pointer-events: auto;
+  min-width: 0;
 }
 
 .weekly-event strong {
-  font-size: 0.62rem;
+  font-size: 0.58rem;
+  line-height: 1.05;
   flex-shrink: 0;
 }
 
 .weekly-event-line {
-  font-size: 0.58rem;
-  line-height: 1.15;
+  font-size: 0.52rem;
+  line-height: 1.08;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .weekly-event-paciente {

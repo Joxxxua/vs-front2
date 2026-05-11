@@ -19,7 +19,29 @@ function pick(...values: (string | undefined | null)[]): string {
 function labelPessoa(pessoa?: PessoaLike | null): string {
   if (!pessoa) return ''
   const extended = pessoa as PessoaLike & { fullName?: string; razaoSocial?: string }
-  return pick(pessoa.nome, pessoa.name, extended.fullName, extended.razaoSocial, pessoa.email)
+  return pick(pessoa.nome, pessoa.name, extended.fullName, extended.razaoSocial)
+}
+
+/** Converte a parte local do e-mail em nome legível (ex.: dr.ricardo → Dr. Ricardo). */
+function nomeLegivelDeEmail(email: string): string {
+  const trimmed = email.trim()
+  const at = trimmed.indexOf('@')
+  if (at <= 0) return ''
+
+  const local = trimmed.slice(0, at)
+  const parts = local.split(/[._+\-]+/).filter(Boolean)
+  if (parts.length === 0) return ''
+
+  return parts
+    .map((part) => {
+      const lower = part.toLowerCase()
+      if (lower === 'dr') return 'Dr.'
+      if (lower === 'dra') return 'Dra.'
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+    })
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 function labelPessoaNested(
@@ -42,7 +64,10 @@ export function getPacienteNome(agendamento: Agendamento): string {
   if (nomeDireto) return nomeDireto
 
   const email = pick(agendamento.user?.email, agendamento.paciente?.email, agendamento.usuario?.email)
-  if (email) return email
+  if (email) {
+    const deEmail = nomeLegivelDeEmail(email)
+    if (deEmail) return deEmail
+  }
 
   const cpf = agendamento.user?.cpf?.replace(/\D/g, '')
   if (cpf && cpf.length >= 4) return `Paciente (CPF …${cpf.slice(-4)})`
@@ -65,8 +90,11 @@ export function getMedicoNome(agendamento: Agendamento): string {
 
   if (nomeDireto) return nomeDireto
 
-  const emailMed = medico?.user?.email
-  if (emailMed) return emailMed
+  const emailMed = pick(medico?.user?.email, medico?.email)
+  if (emailMed) {
+    const deEmail = nomeLegivelDeEmail(emailMed)
+    if (deEmail) return deEmail
+  }
 
   if (medico?.crm) return `Médico (CRM ${medico.crm})`
 

@@ -38,6 +38,7 @@ export interface Agendamento {
   medico?: {
     nome?: string
     name?: string
+    email?: string
     especialidade?: string
     crm?: string
     user?: {
