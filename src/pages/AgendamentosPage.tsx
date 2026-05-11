@@ -7,6 +7,7 @@ import {
 } from '../services/agendamentosService'
 import type { Agendamento, StatusAgendamento } from '../types/agendamento'
 import { ApiError } from '../lib/api'
+import { getMedicoNome, getPacienteNome } from '../lib/agendamentoLabels'
 import './AgendamentosPage.css'
 
 type ModoVisualizacao = 'LISTA' | 'SEMANAL'
@@ -76,20 +77,6 @@ function formatHeroDate(dateISO: string) {
   }
 }
 
-function getPacienteNome(agendamento: Agendamento) {
-  return agendamento.user?.nome ?? agendamento.user?.name ?? 'Paciente não informado'
-}
-
-function getMedicoNome(agendamento: Agendamento) {
-  return (
-    agendamento.medico?.nome ??
-    agendamento.medico?.name ??
-    agendamento.medico?.user?.nome ??
-    agendamento.medico?.user?.name ??
-    'Médico não informado'
-  )
-}
-
 function getEspecialidade(agendamento: Agendamento) {
   return agendamento.medico?.especialidade ?? 'Geral'
 }
@@ -148,7 +135,7 @@ export default function AgendamentosPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [feedbackError, setFeedbackError] = useState('')
   const [feedbackSuccess, setFeedbackSuccess] = useState('')
-  const [viewMode, setViewMode] = useState<ModoVisualizacao>('LISTA')
+  const [viewMode, setViewMode] = useState<ModoVisualizacao>('SEMANAL')
   const [especialidadeChip, setEspecialidadeChip] = useState('Todos')
   const [statusFiltro, setStatusFiltro] = useState<StatusAgendamento | ''>('')
   const [dataInicial, setDataInicial] = useState('')
@@ -288,26 +275,6 @@ export default function AgendamentosPage() {
 
   return (
     <section className="agendamento-page">
-      <section className="agendamento-hero">
-        <div>
-          <p className="agendamento-hero-chip">Próximo compromisso</p>
-          <h1>Gestão clínica com visão total da agenda</h1>
-          {proximoAgendamento ? (
-            <div className="agendamento-hero-next">
-              <p>{formatHeroDate(proximoAgendamento.data).dia}</p>
-              <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
-              <span>{getMedicoNome(proximoAgendamento)}</span>
-              <small>{getPacienteNome(proximoAgendamento)}</small>
-              <em className={`status-pill ${STATUS_CLASSNAMES[proximoAgendamento.status]}`}>
-                {STATUS_LABELS[proximoAgendamento.status]}
-              </em>
-            </div>
-          ) : (
-            <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>
-          )}
-        </div>
-      </section>
-
       <section className="agendamento-controls">
         <div className="chip-group" role="tablist" aria-label="Filtrar por especialidade">
           {especialidadesDisponiveis.map((especialidade) => (
@@ -390,12 +357,18 @@ export default function AgendamentosPage() {
 
       {isLoading ? <p className="loading-state">Carregando agendamentos...</p> : null}
 
-      {!isLoading && agendamentosFiltrados.length === 0 ? (
+      {!isLoading && viewMode === 'LISTA' && agendamentosFiltrados.length === 0 ? (
         <p className="empty-state">Nenhum agendamento encontrado.</p>
       ) : null}
 
-      {!isLoading && agendamentosFiltrados.length > 0 && viewMode === 'LISTA' ? (
-        <section className="card-grid">
+      {!isLoading && viewMode === 'LISTA' && agendamentosFiltrados.length > 0 ? (
+        <div className="lista-view-wrap">
+          <div className="lista-view-toolbar">
+            <button type="button" className="lista-ver-agenda-button" onClick={() => setViewMode('SEMANAL')}>
+              Ver agenda semanal
+            </button>
+          </div>
+          <section className="card-grid">
           {agendamentosFiltrados.map((agendamento) => {
             const acaoAtual = loadingAcoes[agendamento.id]
             return (
@@ -458,10 +431,11 @@ export default function AgendamentosPage() {
               </article>
             )
           })}
-        </section>
+          </section>
+        </div>
       ) : null}
 
-      {!isLoading && agendamentosFiltrados.length > 0 && viewMode === 'SEMANAL' ? (
+      {!isLoading && viewMode === 'SEMANAL' ? (
         <section className="weekly-board">
           <header className="weekly-header">
             <div>
@@ -469,6 +443,13 @@ export default function AgendamentosPage() {
               <p>{weekLabel}</p>
             </div>
             <div className="weekly-actions">
+              <button
+                type="button"
+                className="weekly-ver-lista-button"
+                onClick={() => setViewMode('LISTA')}
+              >
+                Ver lista em cards
+              </button>
               <button type="button" onClick={() => setSemanaAtual(getCurrentWeekStart(new Date()))}>
                 Hoje
               </button>
@@ -499,6 +480,13 @@ export default function AgendamentosPage() {
               </button>
             </div>
           </header>
+
+          {agendamentosSemana.length === 0 ? (
+            <p className="weekly-empty-hint" role="status">
+              Nenhum agendamento nesta semana com os filtros atuais. A grade abaixo mostra os
+              horários de 07:00 a 21:00.
+            </p>
+          ) : null}
 
           <div className="weekly-grid-wrapper">
             <div className="weekly-grid">
@@ -548,8 +536,18 @@ export default function AgendamentosPage() {
                               )}`}
                               onClick={() => setSelectedAgendamento(agendamento)}
                             >
-                              <strong>{new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(date)}</strong>
-                              <span>{getPacienteNome(agendamento)}</span>
+                              <strong>
+                                {new Intl.DateTimeFormat('pt-BR', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                }).format(date)}
+                              </strong>
+                              <span className="weekly-event-line weekly-event-paciente">
+                                {getPacienteNome(agendamento)}
+                              </span>
+                              <span className="weekly-event-line weekly-event-medico">
+                                {getMedicoNome(agendamento)}
+                              </span>
                             </button>
                           )
                         })}
@@ -561,6 +559,26 @@ export default function AgendamentosPage() {
           </div>
         </section>
       ) : null}
+
+      <section className="agendamento-hero">
+        <div>
+          <p className="agendamento-hero-chip">Próximo compromisso</p>
+          <h1>Gestão clínica com visão total da agenda</h1>
+          {proximoAgendamento ? (
+            <div className="agendamento-hero-next">
+              <p>{formatHeroDate(proximoAgendamento.data).dia}</p>
+              <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
+              <span>{getMedicoNome(proximoAgendamento)}</span>
+              <small>{getPacienteNome(proximoAgendamento)}</small>
+              <em className={`status-pill ${STATUS_CLASSNAMES[proximoAgendamento.status]}`}>
+                {STATUS_LABELS[proximoAgendamento.status]}
+              </em>
+            </div>
+          ) : (
+            <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>
+          )}
+        </div>
+      </section>
 
       {selectedAgendamento ? (
         <div className="modal-overlay" role="dialog" aria-modal="true" aria-label="Detalhes do agendamento">

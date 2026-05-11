@@ -301,6 +301,58 @@
   display: flex;
   gap: 0.45rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.weekly-ver-lista-button {
+  border: 1px solid var(--line-strong) !important;
+  background: var(--bg-elevated) !important;
+  color: var(--text-main) !important;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.52rem 0.95rem !important;
+  cursor: pointer;
+}
+
+.weekly-ver-lista-button:hover {
+  border-color: var(--accent-strong) !important;
+  background: #f4fbe8 !important;
+}
+
+.lista-view-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lista-view-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lista-ver-agenda-button {
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.52rem 0.95rem;
+  cursor: pointer;
+}
+
+.lista-ver-agenda-button:hover {
+  border-color: var(--accent-strong);
+  background: #f4fbe8;
+}
+
+.weekly-empty-hint {
+  margin: 0 0 0.85rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  background: #f6faf3;
+  border: 1px dashed var(--line-soft);
 }
 
 .weekly-new-button {
@@ -361,25 +413,41 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 34px;
+  min-height: 52px;
+  max-height: 78px;
   border-radius: 10px;
   border: none;
   text-align: left;
-  display: grid;
-  padding: 0.2rem 0.42rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.06rem;
+  padding: 0.22rem 0.4rem 0.28rem;
   color: #0f1510;
   box-shadow: 0 6px 12px rgba(20, 29, 19, 0.1);
 }
 
 .weekly-event strong {
-  font-size: 0.64rem;
+  font-size: 0.62rem;
+  flex-shrink: 0;
 }
 
-.weekly-event span {
-  font-size: 0.66rem;
+.weekly-event-line {
+  font-size: 0.58rem;
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.weekly-event-paciente {
+  font-weight: 600;
+}
+
+.weekly-event-medico {
+  color: #2d3d30;
+  opacity: 0.92;
 }
 
 .modal-overlay {

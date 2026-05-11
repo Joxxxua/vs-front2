@@ -8,6 +8,26 @@ export interface Agendamento {
   id: string
   data: string
   status: StatusAgendamento
+  /** Nome vindo “flat” da API (alternativas comuns) */
+  nomePaciente?: string
+  pacienteNome?: string
+  nomeMedico?: string
+  medicoNome?: string
+  paciente?: {
+    nome?: string
+    name?: string
+    email?: string
+    user?: {
+      nome?: string
+      name?: string
+      email?: string
+    }
+  }
+  usuario?: {
+    nome?: string
+    name?: string
+    email?: string
+  }
   user?: {
     nome?: string
     name?: string
