@@ -1,0 +1,133 @@
+.dashboard-shell {
+  min-height: 100vh;
+  padding: 1.25rem 1.25rem 2rem;
+}
+
+.dashboard-header {
+  position: sticky;
+  top: 1rem;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard-branding {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.dashboard-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(130deg, #d2ff9f, #a7e85f);
+  display: grid;
+  place-items: center;
+}
+
+.dashboard-logo span {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(12, 30, 10, 0.6);
+}
+
+.dashboard-title,
+.dashboard-subtitle,
+.dashboard-section-indicator {
+  margin: 0;
+}
+
+.dashboard-title {
+  font-weight: 700;
+}
+
+.dashboard-subtitle,
+.dashboard-section-indicator {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+.dashboard-account {
+  position: relative;
+}
+
+.dashboard-avatar-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dashboard-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  background: linear-gradient(140deg, #142010, #1f3522);
+  color: var(--text-inverse);
+}
+
+.dashboard-account-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.7rem);
+  min-width: 210px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line-soft);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-md);
+  padding: 0.7rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.dashboard-account-email {
+  margin: 0 0 0.45rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.dashboard-account-menu a,
+.dashboard-account-menu button {
+  border: none;
+  border-radius: 10px;
+  background: #f5f9f2;
+  color: var(--text-main);
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dashboard-account-menu a:hover,
+.dashboard-account-menu button:hover {
+  background: #e8f4d6;
+}
+
+.dashboard-main-content {
+  margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .dashboard-header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .dashboard-section-indicator {
+    grid-column: 1 / -1;
+    order: 4;
+  }
+}

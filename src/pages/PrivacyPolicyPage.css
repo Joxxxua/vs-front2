@@ -1,0 +1,48 @@
+.privacy-page {
+  min-height: 100vh;
+  padding: 1.6rem;
+  display: grid;
+  place-items: center;
+}
+
+.privacy-card {
+  width: min(840px, 100%);
+  border-radius: 30px;
+  border: 1px solid var(--line-soft);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-sm);
+  padding: clamp(1.2rem, 3vw, 2.2rem);
+}
+
+.privacy-chip {
+  margin: 0;
+  display: inline-flex;
+  border-radius: 999px;
+  background: #edf9d8;
+  color: #3f5a24;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.32rem 0.7rem;
+}
+
+.privacy-card h1 {
+  margin: 0.9rem 0 1rem;
+  font-size: clamp(1.7rem, 3.2vw, 2.6rem);
+}
+
+.privacy-card p {
+  margin: 0 0 0.7rem;
+  color: var(--text-secondary);
+}
+
+.privacy-actions {
+  margin-top: 1rem;
+}
+
+.privacy-actions a {
+  display: inline-flex;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  padding: 0.58rem 0.95rem;
+}

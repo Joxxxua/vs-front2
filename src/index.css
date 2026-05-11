@@ -1,0 +1,61 @@
+:root {
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-page: #f3f6f1;
+  --bg-elevated: #ffffff;
+  --bg-soft: #eaf4dc;
+  --bg-glass: rgba(255, 255, 255, 0.76);
+  --line-soft: #d7e5d3;
+  --line-strong: #bfd2ba;
+  --text-main: #131817;
+  --text-secondary: #4b6056;
+  --text-inverse: #f8fff6;
+  --accent: #b6f36a;
+  --accent-strong: #91de2f;
+  --accent-ink: #203017;
+  --status-agendado: #4a8fff;
+  --status-confirmado: #33b06d;
+  --status-cancelado: #db4e4e;
+  --status-realizado: #245a3a;
+  --danger: #cc3a3a;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --shadow-sm: 0 8px 24px rgba(18, 28, 16, 0.06);
+  --shadow-md: 0 24px 60px rgba(20, 32, 18, 0.12);
+  --transition-base: 180ms ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at 16% 4%, #f7ffea 0, transparent 32%),
+    radial-gradient(circle at 96% 0%, #def9af 0, transparent 30%), var(--bg-page);
+  color: var(--text-main);
+  font-size: 16px;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
