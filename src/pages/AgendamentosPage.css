@@ -362,6 +362,10 @@
 
 .weekly-grid-wrapper {
   overflow-x: auto;
+  padding: 8px;
+  border-radius: 16px;
+  background: #e4ebe0;
+  border: 1px solid var(--line-soft);
 }
 
 .weekly-grid {
@@ -369,10 +373,10 @@
   display: grid;
   grid-template-columns: 88px repeat(7, minmax(0, 1fr));
   grid-template-rows: 48px repeat(15, 52px);
-  border: 1px solid var(--line-soft);
+  gap: 6px;
+  padding: 2px;
   border-radius: 12px;
-  overflow: hidden;
-  background: var(--bg-elevated);
+  background: #eef2eb;
 }
 
 .weekly-grid-corner,
@@ -383,8 +387,9 @@
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
-  border-right: 1px solid var(--line-soft);
-  border-bottom: 1px solid var(--line-soft);
+  border-radius: 10px;
+  border: 1px solid #d5e0cf;
+  background: #fbfcf9;
   font-size: 0.82rem;
   color: var(--text-secondary);
   font-weight: 600;
@@ -395,8 +400,9 @@
 }
 
 .weekly-grid-day-header.today-column {
-  background: #effadc;
+  background: #e6f5d8;
   color: #324a20;
+  border-color: #c5dcb8;
 }
 
 .weekly-grid-time-label {
@@ -406,19 +412,19 @@
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
-  border-right: 1px solid var(--line-soft);
-  border-bottom: 1px dashed #deeadc;
+  border-radius: 10px;
+  border: 1px solid #dce5d6;
   font-size: 0.76rem;
   color: var(--text-secondary);
-  background: #fafcf8;
+  background: #ffffff;
 }
 
 .weekly-slot-empty {
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
-  border-right: 1px solid var(--line-soft);
-  border-bottom: 1px dashed #deeadc;
+  border-radius: 10px;
+  border: 1px dashed #c9d4c2;
   background: #fdfefd;
 }
 
@@ -427,33 +433,32 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 0.2rem 0.35rem 0.22rem;
-  border: none;
-  border-right: 1px solid var(--line-soft);
-  border-bottom: 1px dashed #deeadc;
-  border-radius: 0;
+  padding: 0.38rem 0.48rem 0.42rem;
+  border: 1px solid rgba(20, 29, 19, 0.16);
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  gap: 0.06rem;
+  gap: 0.14rem;
   min-width: 0;
   min-height: 0;
   text-align: left;
   cursor: pointer;
   overflow: hidden;
   color: #0f1510;
+  box-shadow: 0 2px 6px rgba(20, 29, 19, 0.08);
 }
 
 .weekly-slot-time {
-  font-size: 0.62rem;
-  line-height: 1.1;
+  font-size: 0.64rem;
+  line-height: 1.15;
   flex-shrink: 0;
 }
 
 .weekly-slot-paciente {
-  font-size: 0.56rem;
-  line-height: 1.12;
+  font-size: 0.58rem;
+  line-height: 1.18;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -462,8 +467,8 @@
 }
 
 .weekly-slot-medico {
-  font-size: 0.52rem;
-  line-height: 1.1;
+  font-size: 0.54rem;
+  line-height: 1.15;
   color: #2d3d30;
   opacity: 0.95;
   white-space: nowrap;
@@ -499,31 +504,29 @@
   min-width: 0;
   min-height: 0;
   height: 100%;
-  border-right: 1px solid var(--line-soft);
-  border-bottom: 1px dashed #deeadc;
+  gap: 5px;
+  padding: 3px;
   overflow: hidden;
+  background: transparent;
 }
 
 .weekly-slot-item {
   flex: 1;
   min-height: 0;
   margin: 0;
-  padding: 0.12rem 0.3rem;
-  border: none;
-  border-radius: 0;
+  padding: 0.28rem 0.4rem 0.3rem;
+  border: 1px solid rgba(20, 29, 19, 0.14);
+  border-radius: 9px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  gap: 0.04rem;
+  gap: 0.1rem;
   text-align: left;
   cursor: pointer;
   overflow: hidden;
   color: #0f1510;
-}
-
-.weekly-slot-item + .weekly-slot-item {
-  border-top: 1px solid rgba(20, 29, 19, 0.12);
+  box-shadow: 0 1px 4px rgba(20, 29, 19, 0.07);
 }
 
 .modal-overlay {
