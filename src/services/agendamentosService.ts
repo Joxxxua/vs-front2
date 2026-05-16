@@ -6,10 +6,17 @@ interface ListAgendamentosParams {
   especialidade?: string
 }
 
-interface ApiListResponse {
-  data?: Agendamento[]
-  results?: Agendamento[]
-  items?: Agendamento[]
+function extrairArray(payload: unknown): Agendamento[] {
+  if (Array.isArray(payload)) return payload as Agendamento[]
+
+  if (payload && typeof payload === 'object') {
+    const obj = payload as Record<string, unknown>
+    for (const value of Object.values(obj)) {
+      if (Array.isArray(value)) return value as Agendamento[]
+    }
+  }
+
+  return []
 }
 
 export async function listarAgendamentos(params: ListAgendamentosParams = {}) {
@@ -17,22 +24,13 @@ export async function listarAgendamentos(params: ListAgendamentosParams = {}) {
     status: params.status,
   })
 
-  let payload: ApiListResponse | Agendamento[]
   try {
-    payload = await apiRequest<ApiListResponse | Agendamento[]>(`/agendamento${query}`, {
-      method: 'GET',
-    })
+    const payload = await apiRequest<unknown>(`/agendamento${query}`, { method: 'GET' })
+    return extrairArray(payload)
   } catch {
-    payload = await apiRequest<ApiListResponse | Agendamento[]>(`/admin/agendamentos${query}`, {
-      method: 'GET',
-    })
+    const payload = await apiRequest<unknown>(`/admin/agendamentos${query}`, { method: 'GET' })
+    return extrairArray(payload)
   }
-
-  if (Array.isArray(payload)) {
-    return payload
-  }
-
-  return payload.data ?? payload.results ?? payload.items ?? []
 }
 
 export async function confirmarAgendamento(id: string) {
