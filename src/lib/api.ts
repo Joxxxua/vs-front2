@@ -1,6 +1,4 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  (import.meta.env.DEV ? '/api' : 'https://api.vidasaudavel.app')
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
