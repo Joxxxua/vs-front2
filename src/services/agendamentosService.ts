@@ -22,6 +22,7 @@ function extrairArray(payload: unknown): Agendamento[] {
 export async function listarAgendamentos(params: ListAgendamentosParams = {}) {
   const query = buildQueryParams({
     status: params.status,
+    limit: '100',
   })
 
   try {
