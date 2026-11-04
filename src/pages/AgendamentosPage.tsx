@@ -65,7 +65,14 @@ function StatusPill({ status }: { status: StatusAgendamento }) {
   )
 }
 
-const HOURS = Array.from({ length: 15 }, (_, index) => index + 7)
+const GRADE_HORA_INICIAL_PADRAO = 8
+const GRADE_HORA_FINAL_PADRAO = 18
+// Must match the pixel values baked into .weekly-grid's grid-template-rows
+// and gap in AgendamentosPage.css — used to position the current-time line.
+const GRADE_ALTURA_CABECALHO = 40
+const GRADE_ALTURA_LINHA = 52
+const GRADE_GAP = 6
+const GRADE_PADDING = 2
 
 function agendamentosNoSlotHora(lista: Agendamento[], dia: Date, hour: number): Agendamento[] {
   return lista.filter((agendamento) => {
@@ -296,6 +303,34 @@ export default function AgendamentosPage() {
       return date >= weekStart && date <= endOfWeek
     })
   }, [agendamentosFiltrados, semanaAtual])
+
+  const horasGrade = useMemo(() => {
+    const horasComAgendamento = agendamentosSemana.map((agendamento) =>
+      parseDateInLocal(agendamento.data).getHours(),
+    )
+    const minHora = Math.min(GRADE_HORA_INICIAL_PADRAO, ...horasComAgendamento)
+    const maxHora = Math.max(GRADE_HORA_FINAL_PADRAO, ...horasComAgendamento)
+    return Array.from({ length: maxHora - minHora + 1 }, (_, index) => index + minHora)
+  }, [agendamentosSemana])
+
+  const linhaHoraAtualTop = useMemo(() => {
+    const agora = new Date()
+    const estaNaSemana = diasSemana.some(
+      (dia) => getStartOfDay(dia).getTime() === getStartOfDay(agora).getTime(),
+    )
+    const hora = agora.getHours()
+    if (!estaNaSemana || hora < horasGrade[0] || hora > horasGrade[horasGrade.length - 1]) {
+      return null
+    }
+    const indiceHora = hora - horasGrade[0]
+    return (
+      GRADE_PADDING +
+      GRADE_ALTURA_CABECALHO +
+      GRADE_GAP +
+      indiceHora * (GRADE_ALTURA_LINHA + GRADE_GAP) +
+      (agora.getMinutes() / 60) * GRADE_ALTURA_LINHA
+    )
+  }, [diasSemana, horasGrade])
 
   const diaSelecionado = diasSemana[diaSelecionadoIndex] ?? diasSemana[0]
 
@@ -613,7 +648,8 @@ export default function AgendamentosPage() {
           {agendamentosSemana.length === 0 ? (
             <p className="weekly-empty-hint" role="status">
               Nenhum agendamento nesta semana com os filtros atuais. A grade abaixo mostra os
-              horários de 07:00 a 21:00.
+              horários de {String(horasGrade[0]).padStart(2, '0')}:00 a{' '}
+              {String(horasGrade[horasGrade.length - 1]).padStart(2, '0')}:00.
             </p>
           ) : null}
 
@@ -694,15 +730,22 @@ export default function AgendamentosPage() {
                 )
               })}
 
-              {HOURS.map((hour) => (
+              {horasGrade.map((hour) => (
                 <Fragment key={hour}>
                   <div className="weekly-grid-time-label">{String(hour).padStart(2, '0')}:00</div>
                   {diasSemana.map((dia) => {
                     const apps = agendamentosNoSlotHora(agendamentosSemana, dia, hour)
                     const slotKey = `slot-${slotDiaKey(dia)}-${hour}`
+                    const isToday = getStartOfDay(dia).getTime() === getStartOfDay(new Date()).getTime()
 
                     if (apps.length === 0) {
-                      return <div key={slotKey} className="weekly-slot-empty" role="gridcell" />
+                      return (
+                        <div
+                          key={slotKey}
+                          className={isToday ? 'weekly-slot-empty today-column' : 'weekly-slot-empty'}
+                          role="gridcell"
+                        />
+                      )
                     }
 
                     if (apps.length === 1) {
@@ -765,6 +808,14 @@ export default function AgendamentosPage() {
                   })}
                 </Fragment>
               ))}
+
+              {linhaHoraAtualTop !== null ? (
+                <div
+                  className="weekly-grid-now-line"
+                  style={{ top: `${linhaHoraAtualTop}px` }}
+                  aria-hidden="true"
+                />
+              ) : null}
             </div>
           </div>
         </section>
