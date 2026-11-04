@@ -9,6 +9,7 @@ import type { Agendamento, StatusAgendamento } from '../types/agendamento'
 import { ApiError } from '../lib/api'
 import { getMedicoNome, getPacienteNome } from '../lib/agendamentoLabels'
 import {
+  AllCategoriesIcon,
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -124,6 +125,10 @@ function formatHeroDate(dateISO: string) {
 
 function getEspecialidade(agendamento: Agendamento) {
   return agendamento.medico?.especialidade ?? 'Geral'
+}
+
+function getEspecialidadeInicial(especialidade: string) {
+  return especialidade.trim().charAt(0).toUpperCase() || '?'
 }
 
 function getTipoNome(agendamento: Agendamento) {
@@ -320,18 +325,73 @@ export default function AgendamentosPage() {
 
   return (
     <section className="agendamento-page">
+      <header className="agendamento-greeting">
+        <p className="agendamento-greeting-eyebrow">Painel Vida Saudável</p>
+        <h1>Olá! Veja o que está por vir na agenda.</h1>
+      </header>
+
+      <section className="agendamento-hero" aria-label="Próximo atendimento">
+        {proximoAgendamento ? (
+          <div className="agendamento-hero-next">
+            <div className="agendamento-hero-next-header">
+              <p className="agendamento-hero-next-label">Próximo atendimento</p>
+              <StatusPill status={proximoAgendamento.status} />
+            </div>
+
+            <div className="agendamento-hero-next-tiles">
+              <div className="agendamento-hero-tile">
+                <span className="agendamento-hero-tile-icon" aria-hidden="true">
+                  <CalendarIcon width={16} height={16} />
+                </span>
+                <span>{formatHeroDate(proximoAgendamento.data).dia}</span>
+              </div>
+              <div className="agendamento-hero-tile">
+                <span className="agendamento-hero-tile-icon" aria-hidden="true">
+                  <ClockIcon width={16} height={16} />
+                </span>
+                <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
+              </div>
+            </div>
+
+            <div className="agendamento-hero-next-people">
+              <span>{getMedicoNome(proximoAgendamento)}</span>
+              <small>{getPacienteNome(proximoAgendamento)}</small>
+            </div>
+          </div>
+        ) : (
+          <div className="agendamento-hero-empty">
+            <p className="agendamento-hero-next-label">Próximo atendimento</p>
+            <p className="agendamento-no-next">
+              Nenhum próximo agendamento futuro com os filtros atuais.
+            </p>
+          </div>
+        )}
+      </section>
+
       <section className="agendamento-controls">
         <div className="chip-group" role="tablist" aria-label="Filtrar por especialidade">
-          {especialidadesDisponiveis.map((especialidade) => (
-            <button
-              key={especialidade}
-              type="button"
-              className={especialidadeChip === especialidade ? 'chip chip-active' : 'chip'}
-              onClick={() => setEspecialidadeChip(especialidade)}
-            >
-              {especialidade}
-            </button>
-          ))}
+          {especialidadesDisponiveis.map((especialidade) => {
+            const isActive = especialidadeChip === especialidade
+            return (
+              <button
+                key={especialidade}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                className={isActive ? 'category-chip is-active' : 'category-chip'}
+                onClick={() => setEspecialidadeChip(especialidade)}
+              >
+                <span className="category-chip-icon" aria-hidden="true">
+                  {especialidade === 'Todos' ? (
+                    <AllCategoriesIcon width={18} height={18} />
+                  ) : (
+                    getEspecialidadeInicial(especialidade)
+                  )}
+                </span>
+                <span className="category-chip-label">{especialidade}</span>
+              </button>
+            )
+          })}
         </div>
 
         <div className="view-toggle" role="tablist" aria-label="Alternador de visualização">
@@ -639,42 +699,6 @@ export default function AgendamentosPage() {
           </div>
         </section>
       ) : null}
-
-      <section className="agendamento-hero">
-        <p className="agendamento-hero-chip">Próximo compromisso</p>
-        <h1>Gestão clínica com visão total da agenda</h1>
-
-        {proximoAgendamento ? (
-          <div className="agendamento-hero-next">
-            <div className="agendamento-hero-next-header">
-              <p className="agendamento-hero-next-label">Próximo atendimento</p>
-              <StatusPill status={proximoAgendamento.status} />
-            </div>
-
-            <div className="agendamento-hero-next-tiles">
-              <div className="agendamento-hero-tile">
-                <span className="agendamento-hero-tile-icon" aria-hidden="true">
-                  <CalendarIcon width={16} height={16} />
-                </span>
-                <span>{formatHeroDate(proximoAgendamento.data).dia}</span>
-              </div>
-              <div className="agendamento-hero-tile">
-                <span className="agendamento-hero-tile-icon" aria-hidden="true">
-                  <ClockIcon width={16} height={16} />
-                </span>
-                <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
-              </div>
-            </div>
-
-            <div className="agendamento-hero-next-people">
-              <span>{getMedicoNome(proximoAgendamento)}</span>
-              <small>{getPacienteNome(proximoAgendamento)}</small>
-            </div>
-          </div>
-        ) : (
-          <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>
-        )}
-      </section>
 
       {selectedAgendamento ? (
         <div className="modal-overlay" role="dialog" aria-modal="true" aria-label="Detalhes do agendamento">

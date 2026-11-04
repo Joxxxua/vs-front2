@@ -3,35 +3,36 @@
   gap: 1rem;
 }
 
-.agendamento-hero {
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--surface-1);
-  box-shadow: var(--shadow-sm);
-  padding: clamp(1rem, 2.8vw, 1.8rem);
+.agendamento-greeting {
+  display: grid;
+  gap: 0.3rem;
 }
 
-.agendamento-hero-chip {
+.agendamento-greeting-eyebrow {
   margin: 0;
   display: inline-flex;
+  align-self: start;
   border-radius: var(--radius-pill);
-  background: var(--surface-2);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
+  background: var(--brand-soft-bg);
+  color: var(--brand-600);
   font-size: 0.74rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.34rem 0.65rem;
+  padding: 0.34rem 0.75rem;
 }
 
-.agendamento-hero h1 {
-  margin: 0.8rem 0 1.1rem;
-  max-width: 28ch;
-  line-height: 1.12;
+.agendamento-greeting h1 {
+  margin: 0;
+  max-width: 34ch;
+  line-height: 1.16;
   color: var(--text-primary);
   font-weight: 700;
   font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+}
+
+.agendamento-hero {
+  border-radius: var(--radius-lg);
 }
 
 .agendamento-no-next {
@@ -39,15 +40,27 @@
   color: var(--text-secondary);
 }
 
+.agendamento-hero-empty {
+  display: grid;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-strong);
+  background: var(--surface-1);
+  padding: var(--space-4) var(--space-5);
+}
+
+.agendamento-hero-empty .agendamento-hero-next-label {
+  color: var(--text-secondary);
+}
+
 .agendamento-hero-next {
   display: grid;
   gap: var(--space-3);
-  width: min(420px, 100%);
   border-radius: var(--radius-md);
-  background: var(--brand-gradient);
+  background: var(--brand-hero-gradient);
   box-shadow: var(--shadow-brand);
   padding: var(--space-4) var(--space-4) var(--space-5);
-  color: var(--text-on-brand);
+  color: var(--text-on-hero);
 }
 
 .agendamento-hero-next-header {
@@ -63,12 +76,12 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--text-on-brand);
-  opacity: 0.82;
+  color: var(--text-on-hero);
+  opacity: 0.85;
 }
 
 .agendamento-hero-next .status-pill {
-  background: rgba(6, 19, 11, 0.8);
+  background: rgba(255, 255, 255, 0.94);
 }
 
 .agendamento-hero-next-tiles {
@@ -81,7 +94,7 @@
   align-items: center;
   gap: 0.45rem;
   border-radius: var(--radius-sm);
-  background: rgba(6, 19, 11, 0.14);
+  background: rgba(255, 255, 255, 0.14);
   padding: 0.5rem 0.75rem;
   font-size: 0.92rem;
   font-weight: 600;
@@ -98,7 +111,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(6, 19, 11, 0.16);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .agendamento-hero-next-people {
@@ -112,7 +125,7 @@
 }
 
 .agendamento-hero-next-people small {
-  opacity: 0.82;
+  opacity: 0.85;
 }
 
 .agendamento-controls {
@@ -127,32 +140,64 @@
 
 .chip-group {
   display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
+  gap: var(--space-4);
+  overflow-x: auto;
+  padding: 0.2rem 0.1rem 0.4rem;
+  scrollbar-width: thin;
 }
 
-.chip {
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-pill);
-  background: var(--surface-2);
+.category-chip {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  width: 68px;
+  border: none;
+  background: transparent;
   color: var(--text-secondary);
-  min-height: var(--tap-min);
-  padding: 0 var(--space-4);
-  font-weight: 500;
+  padding: 0;
   cursor: pointer;
-  transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
 }
 
-.chip:hover {
+.category-chip-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  min-height: var(--tap-min);
+  border-radius: 50%;
+  background: var(--brand-soft-bg);
+  color: var(--brand-600);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+  transition: background var(--transition-base), color var(--transition-base), transform var(--transition-fast);
+}
+
+.category-chip-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.category-chip:hover .category-chip-icon {
+  transform: translateY(-1px);
   border-color: var(--border-strong);
-  color: var(--text-primary);
 }
 
-.chip-active,
-.chip-active:hover {
-  border-color: transparent;
-  background: var(--brand-gradient);
+.category-chip.is-active .category-chip-icon {
+  background: var(--brand-500);
   color: var(--text-on-brand);
+}
+
+.category-chip.is-active .category-chip-label {
+  color: var(--text-primary);
   font-weight: 700;
 }
 
@@ -205,7 +250,7 @@
   color: var(--text-primary);
   min-height: var(--tap-min);
   padding: 0 var(--space-3);
-  color-scheme: dark;
+  color-scheme: light;
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
