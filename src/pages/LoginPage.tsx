@@ -45,68 +45,61 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <section className="login-panel" aria-label="Painel Vida Saudável — acesso">
-        <div className="login-panel-intro">
-          <div className="login-mark" aria-hidden="true" />
-          <p className="login-badge">Painel Vida Saudável</p>
-          <h1>Seu centro clínico em um painel inteligente</h1>
-          <p className="login-panel-lead">
-            Controle agendamentos, acompanhe status e mantenha a operação da clínica fluindo em
-            tempo real.
-          </p>
-        </div>
+        <div className="login-mark" aria-hidden="true" />
+        <p className="login-badge">Painel Vida Saudável</p>
+        <h1 id="login-heading">Acessar conta</h1>
+        <p className="login-panel-lead">
+          Use suas credenciais administrativas para controlar agendamentos e acompanhar a
+          operação da clínica em tempo real.
+        </p>
 
-        <div className="login-panel-aside">
-          <form className="login-panel-form" onSubmit={handleSubmit} aria-labelledby="login-heading">
-            <h2 id="login-heading">Acessar conta</h2>
-            <p className="login-panel-form-lead">Use suas credenciais administrativas para entrar.</p>
+        <form className="login-panel-form" onSubmit={handleSubmit} aria-labelledby="login-heading">
+          <label htmlFor="email">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="admin@clinica.com.br"
+          />
 
-            <label htmlFor="email">E-mail</label>
+          <label htmlFor="senha">Senha</label>
+          <div className="login-password-field">
             <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="admin@clinica.com.br"
+              id="senha"
+              type={mostrarSenha ? 'text' : 'password'}
+              autoComplete="current-password"
+              value={senha}
+              onChange={(event) => setSenha(event.target.value)}
+              placeholder="••••••••"
             />
-
-            <label htmlFor="senha">Senha</label>
-            <div className="login-password-field">
-              <input
-                id="senha"
-                type={mostrarSenha ? 'text' : 'password'}
-                autoComplete="current-password"
-                value={senha}
-                onChange={(event) => setSenha(event.target.value)}
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                className="login-password-toggle"
-                onClick={() => setMostrarSenha((current) => !current)}
-                aria-pressed={mostrarSenha}
-                aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
-              >
-                {mostrarSenha ? <EyeOffIcon /> : <EyeIcon />}
-                <span>{mostrarSenha ? 'Ocultar' : 'Mostrar'} senha</span>
-              </button>
-            </div>
-
-            {error ? (
-              <p role="alert" aria-live="assertive" className="login-error">
-                {error}
-              </p>
-            ) : null}
-
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? 'Entrando...' : 'Entrar no painel'}
+            <button
+              type="button"
+              className="login-password-toggle"
+              onClick={() => setMostrarSenha((current) => !current)}
+              aria-pressed={mostrarSenha}
+              aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+            >
+              {mostrarSenha ? <EyeOffIcon /> : <EyeIcon />}
+              <span>{mostrarSenha ? 'Ocultar' : 'Mostrar'} senha</span>
             </button>
-          </form>
+          </div>
 
-          <Link to="/privacidade" className="login-panel-privacy">
-            Política de Privacidade
-          </Link>
-        </div>
+          {error ? (
+            <p role="alert" aria-live="assertive" className="login-error">
+              {error}
+            </p>
+          ) : null}
+
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Entrando...' : 'Entrar no painel'}
+          </button>
+        </form>
+
+        <Link to="/privacidade" className="login-panel-privacy">
+          Política de Privacidade
+        </Link>
       </section>
     </div>
   )

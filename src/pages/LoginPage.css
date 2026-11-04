@@ -7,25 +7,15 @@
 }
 
 .login-panel {
-  width: min(1320px, calc(100vw - 2rem));
+  width: min(440px, 100%);
   margin-inline: auto;
-  min-height: min(720px, 82vh);
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 480px);
-  gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: center;
-  background: linear-gradient(165deg, var(--bg-page-soft) 0%, var(--bg-page) 70%);
-  border: 1px solid var(--border-subtle);
-  border-radius: 40px;
-  box-shadow: var(--shadow-md);
-  padding: clamp(2.25rem, 5vw, 4rem) clamp(2rem, 4.5vw, 3.75rem);
-}
-
-.login-panel-intro {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-height: 100%;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: clamp(2rem, 5vw, 2.75rem) clamp(1.75rem, 4vw, 2.25rem);
 }
 
 .login-mark {
@@ -42,60 +32,33 @@
   display: inline-flex;
   align-self: flex-start;
   border-radius: var(--radius-pill);
-  background: var(--surface-2);
-  border: 1px solid var(--border-subtle);
-  color: var(--brand-500);
-  font-size: 0.82rem;
-  font-weight: 600;
+  background: var(--brand-soft-bg);
+  color: var(--brand-600);
+  font-size: 0.78rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.4rem 0.85rem;
+  padding: 0.38rem 0.8rem;
 }
 
-.login-panel-intro h1 {
-  margin: 1.15rem 0 1rem;
-  max-width: min(22ch, 100%);
-  line-height: 1.04;
+.login-panel h1 {
+  margin: 1.1rem 0 0.6rem;
+  line-height: 1.12;
   font-weight: 700;
   color: var(--text-primary);
-  font-size: clamp(2.35rem, 4.8vw, 4rem);
+  font-size: clamp(1.75rem, 3.6vw, 2.15rem);
 }
 
 .login-panel-lead {
-  margin: 0;
-  max-width: 38ch;
+  margin: 0 0 1.6rem;
   color: var(--text-secondary);
-  font-size: clamp(1.05rem, 1.75vw, 1.25rem);
-  line-height: 1.6;
-}
-
-.login-panel-aside {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: var(--surface-1);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: clamp(1.75rem, 3.2vw, 2.6rem) clamp(1.6rem, 2.8vw, 2.25rem);
+  font-size: 0.98rem;
+  line-height: 1.55;
 }
 
 .login-panel-form {
   display: grid;
   gap: 0.72rem;
-}
-
-.login-panel-form h2 {
-  margin: 0;
-  font-weight: 700;
-  color: var(--text-primary);
-  font-size: clamp(1.55rem, 2.2vw, 1.95rem);
-}
-
-.login-panel-form-lead {
-  margin: 0 0 0.35rem;
-  color: var(--text-secondary);
-  font-size: clamp(0.95rem, 1.3vw, 1.05rem);
 }
 
 .login-panel-form label {
@@ -166,10 +129,11 @@
   margin: 0.2rem 0;
   padding: 0.65rem 0.8rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 107, 107, 0.35);
-  color: var(--text-primary);
+  border: 1px solid rgba(178, 50, 50, 0.3);
+  color: var(--danger);
   background: var(--danger-bg);
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .login-panel-form button[type='submit'] {
@@ -189,45 +153,35 @@
 }
 
 .login-panel-form button[type='submit']:hover {
-  filter: brightness(1.08);
+  filter: brightness(1.06);
 }
 
 .login-panel-form button[type='submit']:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: wait;
+  box-shadow: none;
 }
 
 .login-panel-privacy {
-  margin-top: 1.15rem;
+  margin-top: 1.4rem;
   min-height: 24px;
   display: inline-flex;
   align-items: center;
+  align-self: center;
   color: var(--text-secondary);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   text-decoration: underline;
-  align-self: flex-start;
+  text-underline-offset: 2px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 480px) {
   .login-page {
-    justify-content: stretch;
-    align-items: stretch;
+    padding: var(--space-3);
   }
 
   .login-panel {
-    grid-template-columns: 1fr;
-    width: 100%;
-    min-height: unset;
-    gap: 1.75rem;
-    padding: clamp(1.5rem, 4vw, 2rem);
-  }
-
-  .login-panel-intro {
-    min-height: unset;
-  }
-
-  .login-panel-intro h1 {
-    max-width: none;
+    border-radius: var(--radius-md);
+    padding: 1.75rem 1.25rem;
   }
 
   .login-password-field input {
