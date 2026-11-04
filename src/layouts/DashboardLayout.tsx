@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { UserIcon } from '../components/icons'
+import { CalendarIcon, UserIcon } from '../components/icons'
 import './DashboardLayout.css'
 
 const NAV_ITEMS = [
-  { to: '/', label: 'Agendamentos' },
-  { to: '/perfil', label: 'Perfil' },
+  { to: '/', label: 'Agendamentos', Icon: CalendarIcon },
+  { to: '/perfil', label: 'Perfil', Icon: UserIcon },
 ]
 
 function getInitials(email: string) {
@@ -88,6 +88,23 @@ export default function DashboardLayout() {
       <main className="dashboard-main-content">
         <Outlet />
       </main>
+
+      <nav className="dashboard-bottom-nav" aria-label="Navegação principal">
+        {NAV_ITEMS.map(({ to, label, Icon }) => {
+          const isActive = pathname === to
+          return (
+            <Link
+              key={to}
+              to={to}
+              className={isActive ? 'dashboard-bottom-nav-link is-active' : 'dashboard-bottom-nav-link'}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <Icon width={22} height={22} />
+              <span>{label}</span>
+            </Link>
+          )
+        })}
+      </nav>
     </div>
   )
 }
