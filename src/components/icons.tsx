@@ -88,13 +88,10 @@ export function UserIcon(props: IconProps) {
   )
 }
 
-export function AllCategoriesIcon(props: IconProps) {
+export function FilterIcon(props: IconProps) {
   return (
     <svg {...base(props)}>
-      <rect x="3.5" y="3.5" width="7" height="7" rx="1.6" />
-      <rect x="13.5" y="3.5" width="7" height="7" rx="1.6" />
-      <rect x="3.5" y="13.5" width="7" height="7" rx="1.6" />
-      <rect x="13.5" y="13.5" width="7" height="7" rx="1.6" />
+      <path d="M3.5 6h17M7 12h10M10.5 18h3" />
     </svg>
   )
 }

@@ -9,11 +9,11 @@ import type { Agendamento, StatusAgendamento } from '../types/agendamento'
 import { ApiError } from '../lib/api'
 import { getMedicoNome, getPacienteNome } from '../lib/agendamentoLabels'
 import {
-  AllCategoriesIcon,
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ClockIcon,
+  FilterIcon,
   PlusIcon,
   SearchIcon,
   StatusAgendadoIcon,
@@ -127,10 +127,6 @@ function getEspecialidade(agendamento: Agendamento) {
   return agendamento.medico?.especialidade ?? 'Geral'
 }
 
-function getEspecialidadeInicial(especialidade: string) {
-  return especialidade.trim().charAt(0).toUpperCase() || '?'
-}
-
 function getTipoNome(agendamento: Agendamento) {
   return agendamento.tipo?.nome ?? agendamento.tipo?.name ?? 'Consulta'
 }
@@ -208,6 +204,7 @@ export default function AgendamentosPage() {
   const [statusFiltro, setStatusFiltro] = useState<StatusAgendamento | ''>('')
   const [dataInicial, setDataInicial] = useState('')
   const [dataFinal, setDataFinal] = useState('')
+  const [filtrosAbertos, setFiltrosAbertos] = useState(false)
   const [loadingAcoes, setLoadingAcoes] = useState<Record<string, AcaoAgendamento | null>>({})
   const [semanaAtual, setSemanaAtual] = useState<Date>(() => getCurrentWeekStart(new Date()))
   const [diaSelecionadoIndex, setDiaSelecionadoIndex] = useState(() =>
@@ -357,12 +354,142 @@ export default function AgendamentosPage() {
     month: 'short',
   }).format(diasSemana[6])}`
 
+  const hasFiltrosAtivos = Boolean(statusFiltro || dataInicial || dataFinal)
+
   return (
     <section className="agendamento-page">
-      <header className="agendamento-greeting">
-        <p className="agendamento-greeting-eyebrow">Painel Vida Saudável</p>
-        <h1>Olá! Veja o que está por vir na agenda.</h1>
+      <header className="agenda-toolbar">
+        <div className="agenda-toolbar-title">
+          <h1>Agenda</h1>
+          {viewMode === 'SEMANAL' ? <span className="agenda-toolbar-range">{weekLabel}</span> : null}
+        </div>
+
+        <div className="agenda-toolbar-controls">
+          <div className="specialty-pills" role="tablist" aria-label="Filtrar por especialidade">
+            {especialidadesDisponiveis.map((especialidade) => {
+              const isActive = especialidadeChip === especialidade
+              return (
+                <button
+                  key={especialidade}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  className={isActive ? 'specialty-pill is-active' : 'specialty-pill'}
+                  onClick={() => setEspecialidadeChip(especialidade)}
+                >
+                  {especialidade}
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="view-toggle" role="tablist" aria-label="Alternador de visualização">
+            <button
+              type="button"
+              className={viewMode === 'LISTA' ? 'view-active' : ''}
+              onClick={() => setViewMode('LISTA')}
+            >
+              Lista
+            </button>
+            <button
+              type="button"
+              className={viewMode === 'SEMANAL' ? 'view-active' : ''}
+              onClick={() => setViewMode('SEMANAL')}
+            >
+              Agenda
+            </button>
+          </div>
+
+          <button
+            type="button"
+            className="filtros-toggle"
+            aria-expanded={filtrosAbertos}
+            aria-controls="filtros-panel"
+            onClick={() => setFiltrosAbertos((current) => !current)}
+          >
+            <FilterIcon width={15} height={15} />
+            Filtros
+            {hasFiltrosAtivos ? <span className="filtros-dot" aria-hidden="true" /> : null}
+          </button>
+
+          {viewMode === 'SEMANAL' ? (
+            <div className="agenda-toolbar-week-actions">
+              <button type="button" className="toolbar-ghost-button" onClick={handleHoje}>
+                Hoje
+              </button>
+              <button
+                type="button"
+                className="toolbar-ghost-button toolbar-icon-button"
+                aria-label="Semana anterior"
+                onClick={() => {
+                  const previous = new Date(semanaAtual)
+                  previous.setDate(previous.getDate() - 7)
+                  setSemanaAtual(previous)
+                }}
+              >
+                <ChevronLeftIcon />
+              </button>
+              <button
+                type="button"
+                className="toolbar-ghost-button toolbar-icon-button"
+                aria-label="Próxima semana"
+                onClick={() => {
+                  const next = new Date(semanaAtual)
+                  next.setDate(next.getDate() + 7)
+                  setSemanaAtual(next)
+                }}
+              >
+                <ChevronRightIcon />
+              </button>
+            </div>
+          ) : null}
+
+          <button type="button" className="toolbar-new-button">
+            <PlusIcon width={16} height={16} />
+            <span className="toolbar-new-button-label">Novo Agendamento</span>
+          </button>
+        </div>
       </header>
+
+      {filtrosAbertos ? (
+        <section id="filtros-panel" className="filters-panel">
+          <label>
+            Status
+            <select
+              value={statusFiltro}
+              onChange={(event) => setStatusFiltro(event.target.value as StatusAgendamento | '')}
+            >
+              {STATUS_OPTIONS.map((option) => (
+                <option key={option.label} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Data inicial
+            <input
+              type="date"
+              value={dataInicial}
+              onChange={(event) => setDataInicial(event.target.value)}
+            />
+          </label>
+
+          <label>
+            Data final
+            <input type="date" value={dataFinal} onChange={(event) => setDataFinal(event.target.value)} />
+          </label>
+
+          <button type="button" onClick={handleBuscar}>
+            <SearchIcon width={16} height={16} />
+            Buscar
+          </button>
+          <button type="button" className="ghost-action" onClick={handleLimpar}>
+            Limpar
+          </button>
+        </section>
+      ) : null}
 
       <section className="agendamento-hero" aria-label="Próximo atendimento">
         {proximoAgendamento ? (
@@ -402,88 +529,6 @@ export default function AgendamentosPage() {
         )}
       </section>
 
-      <section className="agendamento-controls">
-        <div className="chip-group" role="tablist" aria-label="Filtrar por especialidade">
-          {especialidadesDisponiveis.map((especialidade) => {
-            const isActive = especialidadeChip === especialidade
-            return (
-              <button
-                key={especialidade}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                className={isActive ? 'category-chip is-active' : 'category-chip'}
-                onClick={() => setEspecialidadeChip(especialidade)}
-              >
-                <span className="category-chip-icon" aria-hidden="true">
-                  {especialidade === 'Todos' ? (
-                    <AllCategoriesIcon width={18} height={18} />
-                  ) : (
-                    getEspecialidadeInicial(especialidade)
-                  )}
-                </span>
-                <span className="category-chip-label">{especialidade}</span>
-              </button>
-            )
-          })}
-        </div>
-
-        <div className="view-toggle" role="tablist" aria-label="Alternador de visualização">
-          <button
-            type="button"
-            className={viewMode === 'LISTA' ? 'view-active' : ''}
-            onClick={() => setViewMode('LISTA')}
-          >
-            Lista
-          </button>
-          <button
-            type="button"
-            className={viewMode === 'SEMANAL' ? 'view-active' : ''}
-            onClick={() => setViewMode('SEMANAL')}
-          >
-            Agenda Semanal
-          </button>
-        </div>
-
-        <div className="filter-panel">
-          <label>
-            Status
-            <select
-              value={statusFiltro}
-              onChange={(event) => setStatusFiltro(event.target.value as StatusAgendamento | '')}
-            >
-              {STATUS_OPTIONS.map((option) => (
-                <option key={option.label} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label>
-            Data inicial
-            <input
-              type="date"
-              value={dataInicial}
-              onChange={(event) => setDataInicial(event.target.value)}
-            />
-          </label>
-
-          <label>
-            Data final
-            <input type="date" value={dataFinal} onChange={(event) => setDataFinal(event.target.value)} />
-          </label>
-
-          <button type="button" onClick={handleBuscar}>
-            <SearchIcon width={16} height={16} />
-            Buscar
-          </button>
-          <button type="button" className="ghost-action" onClick={handleLimpar}>
-            Limpar
-          </button>
-        </div>
-      </section>
-
       {feedbackSuccess ? (
         <p role="status" aria-live="polite" className="feedback-success">
           {feedbackSuccess}
@@ -509,12 +554,6 @@ export default function AgendamentosPage() {
       ) : null}
 
       {!isLoading && viewMode === 'LISTA' && agendamentosFiltrados.length > 0 ? (
-        <div className="lista-view-wrap">
-          <div className="lista-view-toolbar">
-            <button type="button" className="lista-ver-agenda-button" onClick={() => setViewMode('SEMANAL')}>
-              Ver agenda semanal
-            </button>
-          </div>
           <section className="card-grid">
           {agendamentosFiltrados.map((agendamento) => {
             const acaoAtual = loadingAcoes[agendamento.id]
@@ -582,58 +621,10 @@ export default function AgendamentosPage() {
             )
           })}
           </section>
-        </div>
       ) : null}
 
       {!isLoading && viewMode === 'SEMANAL' ? (
         <section className="weekly-board">
-          <header className="weekly-header">
-            <div>
-              <h2>Agenda Semanal</h2>
-              <p>{weekLabel}</p>
-            </div>
-            <div className="weekly-actions">
-              <button
-                type="button"
-                className="weekly-ver-lista-button"
-                onClick={() => setViewMode('LISTA')}
-              >
-                Ver lista em cards
-              </button>
-              <button type="button" className="weekly-ghost-button" onClick={handleHoje}>
-                Hoje
-              </button>
-              <button
-                type="button"
-                className="weekly-ghost-button weekly-ghost-button-icon"
-                aria-label="Semana anterior"
-                onClick={() => {
-                  const previous = new Date(semanaAtual)
-                  previous.setDate(previous.getDate() - 7)
-                  setSemanaAtual(previous)
-                }}
-              >
-                <ChevronLeftIcon />
-              </button>
-              <button
-                type="button"
-                className="weekly-ghost-button weekly-ghost-button-icon"
-                aria-label="Próxima semana"
-                onClick={() => {
-                  const next = new Date(semanaAtual)
-                  next.setDate(next.getDate() + 7)
-                  setSemanaAtual(next)
-                }}
-              >
-                <ChevronRightIcon />
-              </button>
-              <button type="button" className="weekly-new-button">
-                <PlusIcon width={16} height={16} />
-                Novo Agendamento
-              </button>
-            </div>
-          </header>
-
           {agendamentosSemana.length === 0 ? (
             <p className="weekly-empty-hint" role="status">
               Nenhum agendamento nesta semana com os filtros atuais. A grade abaixo mostra os
