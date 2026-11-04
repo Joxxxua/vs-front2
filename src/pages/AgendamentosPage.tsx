@@ -8,6 +8,13 @@ import {
 import type { Agendamento, StatusAgendamento } from '../types/agendamento'
 import { ApiError } from '../lib/api'
 import { getMedicoNome, getPacienteNome } from '../lib/agendamentoLabels'
+import {
+  SearchIcon,
+  StatusAgendadoIcon,
+  StatusCanceladoIcon,
+  StatusConfirmadoIcon,
+  StatusRealizadoIcon,
+} from '../components/icons'
 import './AgendamentosPage.css'
 
 type ModoVisualizacao = 'LISTA' | 'SEMANAL'
@@ -33,6 +40,23 @@ const STATUS_CLASSNAMES: Record<StatusAgendamento, string> = {
   CONFIRMADO: 'status-confirmado',
   CANCELADO: 'status-cancelado',
   REALIZADO: 'status-realizado',
+}
+
+const STATUS_ICONS: Record<StatusAgendamento, typeof StatusAgendadoIcon> = {
+  AGENDADO: StatusAgendadoIcon,
+  CONFIRMADO: StatusConfirmadoIcon,
+  CANCELADO: StatusCanceladoIcon,
+  REALIZADO: StatusRealizadoIcon,
+}
+
+function StatusPill({ status }: { status: StatusAgendamento }) {
+  const Icon = STATUS_ICONS[status]
+  return (
+    <span className={`status-pill ${STATUS_CLASSNAMES[status]}`}>
+      <Icon width={13} height={13} />
+      {STATUS_LABELS[status]}
+    </span>
+  )
 }
 
 const HOURS = Array.from({ length: 15 }, (_, index) => index + 7)
@@ -352,6 +376,7 @@ export default function AgendamentosPage() {
           </label>
 
           <button type="button" onClick={handleBuscar}>
+            <SearchIcon width={16} height={16} />
             Buscar
           </button>
           <button type="button" className="ghost-action" onClick={handleLimpar}>
@@ -394,9 +419,7 @@ export default function AgendamentosPage() {
                     <p>{formatCompleteDate(agendamento.data)}</p>
                     <strong>{getTipoNome(agendamento)}</strong>
                   </div>
-                  <span className={`status-pill ${STATUS_CLASSNAMES[agendamento.status]}`}>
-                    {STATUS_LABELS[agendamento.status]}
-                  </span>
+                  <StatusPill status={agendamento.status} />
                 </header>
 
                 <dl>
@@ -598,9 +621,7 @@ export default function AgendamentosPage() {
               <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
               <span>{getMedicoNome(proximoAgendamento)}</span>
               <small>{getPacienteNome(proximoAgendamento)}</small>
-              <em className={`status-pill ${STATUS_CLASSNAMES[proximoAgendamento.status]}`}>
-                {STATUS_LABELS[proximoAgendamento.status]}
-              </em>
+              <StatusPill status={proximoAgendamento.status} />
             </div>
           ) : (
             <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>

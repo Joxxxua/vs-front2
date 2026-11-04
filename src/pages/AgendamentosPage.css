@@ -51,105 +51,152 @@
 }
 
 .agendamento-controls {
-  border: 1px solid var(--line-soft);
-  border-radius: 24px;
-  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
   box-shadow: var(--shadow-sm);
-  padding: 0.9rem;
+  padding: var(--space-4);
   display: grid;
-  gap: 0.9rem;
+  gap: var(--space-4);
 }
 
 .chip-group {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
 .chip {
-  border: 1px solid var(--line-soft);
-  border-radius: 999px;
-  background: #f8fcf2;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
   color: var(--text-secondary);
-  padding: 0.45rem 0.75rem;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
+  font-weight: 500;
   cursor: pointer;
+  transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
 }
 
-.chip-active {
+.chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.chip-active,
+.chip-active:hover {
   border-color: transparent;
-  background: linear-gradient(130deg, var(--accent), var(--accent-strong));
-  color: var(--accent-ink);
+  background: var(--brand-gradient);
+  color: var(--text-on-brand);
   font-weight: 700;
 }
 
 .view-toggle {
   display: inline-flex;
-  gap: 0.4rem;
-  padding: 0.35rem;
-  border-radius: 999px;
-  border: 1px solid var(--line-soft);
-  background: #f8fbf6;
+  gap: var(--space-1);
+  padding: 0.3rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-2);
   width: fit-content;
 }
 
 .view-toggle button {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--text-secondary);
-  padding: 0.44rem 0.7rem;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
+  font-weight: 600;
   cursor: pointer;
+  transition: background var(--transition-base), color var(--transition-base);
 }
 
 .view-toggle .view-active {
-  background: #1d2b16;
-  color: var(--text-inverse);
+  background: var(--brand-gradient);
+  color: var(--text-on-brand);
 }
 
 .filter-panel {
   display: grid;
   grid-template-columns: repeat(3, minmax(140px, 1fr)) auto auto;
-  gap: 0.55rem;
+  gap: var(--space-3);
   align-items: end;
 }
 
 .filter-panel label {
   display: grid;
-  gap: 0.3rem;
+  gap: var(--space-1);
   font-size: 0.81rem;
   color: var(--text-secondary);
 }
 
 .filter-panel input,
 .filter-panel select {
-  border: 1px solid var(--line-strong);
-  border-radius: 12px;
-  background: #fcfef9;
-  padding: 0.56rem 0.64rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-3);
+  color-scheme: dark;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.filter-panel input:focus-visible,
+.filter-panel select:focus-visible {
+  border-color: var(--brand-500);
+  box-shadow: var(--focus-ring);
 }
 
 .filter-panel button,
 .appointment-card footer button,
 .weekly-actions button,
 .modal-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   border: none;
-  border-radius: 999px;
-  background: linear-gradient(130deg, var(--accent), var(--accent-strong));
-  color: var(--accent-ink);
+  border-radius: var(--radius-pill);
+  background: var(--brand-gradient);
+  color: var(--text-on-brand);
   font-weight: 700;
-  padding: 0.58rem 0.84rem;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
   cursor: pointer;
+  transition: filter var(--transition-base);
+}
+
+.filter-panel button:hover,
+.appointment-card footer button:hover,
+.weekly-actions button:hover,
+.modal-actions button:hover {
+  filter: brightness(1.08);
 }
 
 .ghost-action {
-  border: 1px solid var(--line-strong) !important;
+  border: 1px solid var(--border-strong) !important;
   background: transparent !important;
   color: var(--text-secondary) !important;
 }
 
+.ghost-action:hover {
+  color: var(--text-primary) !important;
+  filter: none !important;
+  background: var(--surface-2) !important;
+}
+
 .danger-action {
-  background: rgba(219, 78, 78, 0.18) !important;
-  color: #832727 !important;
+  background: var(--danger-bg) !important;
+  color: var(--danger) !important;
+  border: 1px solid rgba(255, 107, 107, 0.35) !important;
+}
+
+.danger-action:hover {
+  filter: none !important;
+  background: rgba(255, 107, 107, 0.22) !important;
 }
 
 .feedback-success,
@@ -157,27 +204,30 @@
 .loading-state,
 .empty-state {
   margin: 0;
-  border-radius: 14px;
-  padding: 0.65rem 0.8rem;
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
   border: 1px solid;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .feedback-success {
-  background: #ebffe9;
-  border-color: #c3efbd;
-  color: #2e7034;
+  background: var(--status-confirmado-bg);
+  border-color: rgba(47, 209, 107, 0.35);
+  color: var(--status-confirmado);
 }
 
 .feedback-error {
-  background: #ffe7e7;
-  border-color: #f2bbbb;
-  color: #8c2525;
+  background: var(--danger-bg);
+  border-color: rgba(255, 107, 107, 0.35);
+  color: var(--danger);
 }
 
 .loading-state,
 .empty-state {
-  background: #f8fbf5;
-  border-color: var(--line-soft);
+  background: var(--surface-1);
+  border-color: var(--border-subtle);
   color: var(--text-secondary);
 }
 
@@ -216,10 +266,14 @@
 
 .status-pill {
   align-self: start;
-  border-radius: 999px;
-  padding: 0.22rem 0.58rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.62rem;
   font-size: 0.73rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .status-agendado {
