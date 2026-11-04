@@ -13,7 +13,6 @@ export async function login(email: string, senha: string) {
     auth: false,
     body: {
       email,
-      senha,
       password: senha,
     },
   })
