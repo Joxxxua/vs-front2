@@ -1,7 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { UserIcon } from '../components/icons'
 import './DashboardLayout.css'
+
+const NAV_ITEMS = [
+  { to: '/', label: 'Agendamentos' },
+  { to: '/perfil', label: 'Perfil' },
+]
 
 function getInitials(email: string) {
   const [name] = email.split('@')
@@ -13,11 +19,6 @@ function getInitials(email: string) {
     .join('')
 }
 
-function getSectionLabel(pathname: string) {
-  if (pathname === '/perfil') return 'Painel • Perfil'
-  return 'Painel • Agendamentos'
-}
-
 export default function DashboardLayout() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -25,7 +26,6 @@ export default function DashboardLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const initials = useMemo(() => getInitials(email), [email])
-  const sectionLabel = useMemo(() => getSectionLabel(pathname), [pathname])
 
   function handleLogout() {
     logout()
@@ -36,16 +36,25 @@ export default function DashboardLayout() {
     <div className="dashboard-shell">
       <header className="dashboard-header">
         <div className="dashboard-branding">
-          <div className="dashboard-logo" aria-hidden="true">
-            <span />
-          </div>
+          <div className="dashboard-logo" aria-hidden="true" />
           <div>
             <p className="dashboard-title">Painel Clínica</p>
-            <p className="dashboard-subtitle">Agendamentos</p>
+            <p className="dashboard-subtitle">Vida Saudável</p>
           </div>
         </div>
 
-        <p className="dashboard-section-indicator">{sectionLabel}</p>
+        <nav className="dashboard-nav" aria-label="Navegação principal">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={pathname === item.to ? 'dashboard-nav-link is-active' : 'dashboard-nav-link'}
+              aria-current={pathname === item.to ? 'page' : undefined}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
 
         <div className="dashboard-account">
           <button
@@ -61,7 +70,10 @@ export default function DashboardLayout() {
 
           {isMenuOpen ? (
             <div className="dashboard-account-menu" role="menu">
-              <p className="dashboard-account-email">{email || 'Usuário logado'}</p>
+              <p className="dashboard-account-email">
+                <UserIcon width={14} height={14} />
+                {email || 'Usuário logado'}
+              </p>
               <Link to="/perfil" onClick={() => setIsMenuOpen(false)} role="menuitem">
                 Meu perfil
               </Link>

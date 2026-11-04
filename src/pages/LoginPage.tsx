@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { EyeIcon, EyeOffIcon } from '../components/icons'
 import './LoginPage.css'
 
 function mapFetchError(message: string) {
@@ -45,6 +46,7 @@ export default function LoginPage() {
     <div className="login-page">
       <section className="login-panel" aria-label="Painel Vida Saudável — acesso">
         <div className="login-panel-intro">
+          <div className="login-mark" aria-hidden="true" />
           <p className="login-badge">Painel Vida Saudável</p>
           <h1>Seu centro clínico em um painel inteligente</h1>
           <p className="login-panel-lead">
@@ -69,26 +71,29 @@ export default function LoginPage() {
             />
 
             <label htmlFor="senha">Senha</label>
-            <input
-              id="senha"
-              type={mostrarSenha ? 'text' : 'password'}
-              autoComplete="current-password"
-              value={senha}
-              onChange={(event) => setSenha(event.target.value)}
-              placeholder="••••••••"
-            />
-
-            <label className="login-checkbox">
+            <div className="login-password-field">
               <input
-                type="checkbox"
-                checked={mostrarSenha}
-                onChange={(event) => setMostrarSenha(event.target.checked)}
+                id="senha"
+                type={mostrarSenha ? 'text' : 'password'}
+                autoComplete="current-password"
+                value={senha}
+                onChange={(event) => setSenha(event.target.value)}
+                placeholder="••••••••"
               />
-              Mostrar senha
-            </label>
+              <button
+                type="button"
+                className="login-password-toggle"
+                onClick={() => setMostrarSenha((current) => !current)}
+                aria-pressed={mostrarSenha}
+                aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+              >
+                {mostrarSenha ? <EyeOffIcon /> : <EyeIcon />}
+                <span>{mostrarSenha ? 'Ocultar' : 'Mostrar'} senha</span>
+              </button>
+            </div>
 
             {error ? (
-              <p role="alert" aria-live="polite" className="login-error">
+              <p role="alert" aria-live="assertive" className="login-error">
                 {error}
               </p>
             ) : null}

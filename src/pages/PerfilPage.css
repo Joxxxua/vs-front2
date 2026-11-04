@@ -6,9 +6,9 @@
 
 .perfil-card {
   width: min(540px, 100%);
-  border: 1px solid var(--line-soft);
-  border-radius: 28px;
-  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
   box-shadow: var(--shadow-sm);
   padding: clamp(1.2rem, 3vw, 2rem);
   text-align: center;
@@ -18,14 +18,15 @@
   width: 74px;
   height: 74px;
   margin-inline: auto;
-  margin-bottom: 0.8rem;
+  margin-bottom: var(--space-3);
   border-radius: 50%;
   display: grid;
   place-items: center;
   font-size: 1.45rem;
   font-weight: 700;
-  background: linear-gradient(145deg, #17211a, #2e4431);
-  color: var(--text-inverse);
+  background: var(--brand-soft-bg);
+  border: 1px solid var(--border-strong);
+  color: var(--brand-500);
 }
 
 .perfil-label {
@@ -36,18 +37,28 @@
 
 .perfil-card h1 {
   margin: 0.3rem 0;
+  color: var(--text-primary);
   text-transform: capitalize;
 }
 
 .perfil-card p {
-  margin: 0 0 1rem;
+  margin: 0 0 var(--space-4);
   color: var(--text-secondary);
 }
 
 .perfil-card a {
+  min-height: var(--tap-min);
   text-decoration: none;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
   display: inline-flex;
-  padding: 0.58rem 0.95rem;
+  align-items: center;
+  padding: 0 var(--space-4);
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.perfil-card a:hover {
+  border-color: var(--brand-500);
+  background: var(--surface-2);
 }
