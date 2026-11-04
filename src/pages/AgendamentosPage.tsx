@@ -401,7 +401,14 @@ export default function AgendamentosPage() {
         </p>
       ) : null}
 
-      {isLoading ? <p className="loading-state">Carregando agendamentos...</p> : null}
+      {isLoading ? (
+        <div className="loading-skeleton" role="status" aria-live="polite">
+          <span className="sr-only">Carregando agendamentos...</span>
+          <span className="loading-skeleton-bar loading-skeleton-bar-wide" aria-hidden="true" />
+          <span className="loading-skeleton-bar" aria-hidden="true" />
+          <span className="loading-skeleton-bar loading-skeleton-bar-short" aria-hidden="true" />
+        </div>
+      ) : null}
 
       {!isLoading && viewMode === 'LISTA' && agendamentosFiltrados.length === 0 ? (
         <p className="empty-state">Nenhum agendamento encontrado.</p>

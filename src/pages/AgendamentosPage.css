@@ -241,6 +241,15 @@
   filter: brightness(1.08);
 }
 
+.filter-panel button:disabled,
+.appointment-card footer button:disabled,
+.weekly-actions button:disabled,
+.modal-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: none;
+}
+
 .ghost-action {
   border: 1px solid var(--border-strong) !important;
   background: transparent !important;
@@ -289,11 +298,57 @@
   color: var(--danger);
 }
 
-.loading-state,
 .empty-state {
   background: var(--surface-1);
   border-color: var(--border-subtle);
   color: var(--text-secondary);
+}
+
+.loading-skeleton {
+  display: grid;
+  gap: var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-1);
+  padding: var(--space-4);
+}
+
+.loading-skeleton-bar {
+  height: 14px;
+  width: 70%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 25%,
+    var(--border-strong) 50%,
+    var(--surface-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.loading-skeleton-bar-wide {
+  width: 92%;
+}
+
+.loading-skeleton-bar-short {
+  width: 45%;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-skeleton-bar {
+    animation: none;
+    background: var(--surface-2);
+  }
 }
 
 .card-grid {
@@ -725,25 +780,26 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(11, 19, 8, 0.35);
+  background: rgba(2, 4, 3, 0.6);
   backdrop-filter: blur(3px);
   display: grid;
   place-items: center;
   z-index: 100;
-  padding: 1rem;
+  padding: var(--space-4);
 }
 
 .modal-card {
   width: min(460px, 100%);
-  border-radius: 22px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-md);
-  padding: 1rem;
+  padding: var(--space-4);
 }
 
 .modal-card h3 {
   margin: 0 0 0.7rem;
+  color: var(--text-primary);
 }
 
 .modal-card p {
@@ -752,14 +808,18 @@
 }
 
 .modal-card strong {
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .modal-actions {
-  margin-top: 0.9rem;
+  margin-top: var(--space-4);
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   flex-wrap: wrap;
+}
+
+.modal-actions .ghost-action {
+  margin-left: auto;
 }
 
 @media (max-width: 960px) {
