@@ -1048,6 +1048,41 @@
     grid-template-columns: 1fr;
   }
 
+  .agenda-toolbar {
+    align-items: stretch;
+  }
+
+  .agenda-toolbar-controls {
+    width: 100%;
+  }
+
+  .specialty-pills {
+    max-width: 100%;
+  }
+
+  .specialty-pill,
+  .view-toggle button,
+  .filtros-toggle,
+  .toolbar-ghost-button,
+  .toolbar-icon-button,
+  .toolbar-new-button {
+    height: var(--tap-min);
+  }
+
+  .toolbar-icon-button {
+    width: var(--tap-min);
+  }
+
+  .toolbar-new-button-label {
+    display: none;
+  }
+
+  .toolbar-new-button {
+    width: var(--tap-min);
+    padding: 0;
+    justify-content: center;
+  }
+
   .agendamento-sidebar {
     display: none;
   }

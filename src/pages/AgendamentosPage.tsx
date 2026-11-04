@@ -484,8 +484,8 @@ export default function AgendamentosPage() {
             </div>
           ) : null}
 
-          <button type="button" className="toolbar-new-button">
-            <PlusIcon width={16} height={16} />
+          <button type="button" className="toolbar-new-button" aria-label="Novo Agendamento">
+            <PlusIcon width={16} height={16} aria-hidden="true" />
             <span className="toolbar-new-button-label">Novo Agendamento</span>
           </button>
         </div>
