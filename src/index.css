@@ -1,28 +1,67 @@
 :root {
-  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-  --bg-page: #f3f6f1;
-  --bg-elevated: #ffffff;
-  --bg-soft: #eaf4dc;
-  --bg-glass: rgba(255, 255, 255, 0.76);
-  --line-soft: #d7e5d3;
-  --line-strong: #bfd2ba;
-  --text-main: #131817;
-  --text-secondary: #4b6056;
-  --text-inverse: #f8fff6;
-  --accent: #b6f36a;
-  --accent-strong: #91de2f;
-  --accent-ink: #203017;
-  --status-agendado: #4a8fff;
-  --status-confirmado: #33b06d;
-  --status-cancelado: #db4e4e;
-  --status-realizado: #245a3a;
-  --danger: #cc3a3a;
+  --font-sans: 'Poppins', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Surfaces */
+  --bg-page: #0b0d0c;
+  --bg-page-soft: #111412;
+  --surface-1: #171a18;
+  --surface-2: #1e221f;
+  --surface-glass: rgba(23, 26, 24, 0.86);
+
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  /* Brand */
+  --brand-600: #12a150;
+  --brand-500: #16b45b;
+  --brand-gradient: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+  --brand-ink: #06130b;
+  --brand-soft-bg: rgba(22, 180, 91, 0.14);
+
+  /* Text */
+  --text-primary: #f2f5f3;
+  --text-secondary: #9aa59e;
+  --text-on-brand: var(--brand-ink);
+
+  /* Status (each paired with an icon/label, never color alone) */
+  --status-agendado: #5b9cff;
+  --status-agendado-bg: rgba(91, 156, 255, 0.16);
+  --status-confirmado: #2fd16b;
+  --status-confirmado-bg: rgba(22, 180, 91, 0.18);
+  --status-cancelado: #ff6b6b;
+  --status-cancelado-bg: rgba(255, 107, 107, 0.16);
+  --status-realizado: #b7c4be;
+  --status-realizado-bg: rgba(154, 165, 158, 0.16);
+
+  --danger: #ff6b6b;
+  --danger-bg: rgba(255, 107, 107, 0.14);
+
+  /* Radius */
   --radius-sm: 12px;
-  --radius-md: 18px;
+  --radius-md: 20px;
   --radius-lg: 28px;
-  --shadow-sm: 0 8px 24px rgba(18, 28, 16, 0.06);
-  --shadow-md: 0 24px 60px rgba(20, 32, 18, 0.12);
+  --radius-pill: 999px;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  /* Elevation */
+  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 24px 60px rgba(0, 0, 0, 0.5);
+  --shadow-brand: 0 14px 34px rgba(18, 161, 80, 0.3);
+
+  /* Motion */
   --transition-base: 180ms ease;
+  --transition-fast: 120ms ease;
+  --focus-ring: 0 0 0 3px rgba(22, 180, 91, 0.5);
+
+  /* Touch */
+  --tap-min: 44px;
 }
 
 *,
@@ -39,9 +78,12 @@ body,
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 16% 4%, #f7ffea 0, transparent 32%),
-    radial-gradient(circle at 96% 0%, #def9af 0, transparent 30%), var(--bg-page);
-  color: var(--text-main);
+  background:
+    radial-gradient(circle at 14% 0%, rgba(22, 180, 91, 0.1) 0, transparent 34%),
+    radial-gradient(circle at 100% 8%, rgba(18, 161, 80, 0.06) 0, transparent 30%),
+    var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.5;
   text-rendering: optimizeLegibility;
@@ -58,4 +100,27 @@ input,
 select,
 textarea {
   font: inherit;
+  color: inherit;
+}
+
+::selection {
+  background: var(--brand-600);
+  color: var(--text-primary);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
