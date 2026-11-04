@@ -9,8 +9,10 @@ import type { Agendamento, StatusAgendamento } from '../types/agendamento'
 import { ApiError } from '../lib/api'
 import { getMedicoNome, getPacienteNome } from '../lib/agendamentoLabels'
 import {
+  CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ClockIcon,
   PlusIcon,
   SearchIcon,
   StatusAgendadoIcon,
@@ -632,21 +634,39 @@ export default function AgendamentosPage() {
       ) : null}
 
       <section className="agendamento-hero">
-        <div>
-          <p className="agendamento-hero-chip">Próximo compromisso</p>
-          <h1>Gestão clínica com visão total da agenda</h1>
-          {proximoAgendamento ? (
-            <div className="agendamento-hero-next">
-              <p>{formatHeroDate(proximoAgendamento.data).dia}</p>
-              <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
-              <span>{getMedicoNome(proximoAgendamento)}</span>
-              <small>{getPacienteNome(proximoAgendamento)}</small>
+        <p className="agendamento-hero-chip">Próximo compromisso</p>
+        <h1>Gestão clínica com visão total da agenda</h1>
+
+        {proximoAgendamento ? (
+          <div className="agendamento-hero-next">
+            <div className="agendamento-hero-next-header">
+              <p className="agendamento-hero-next-label">Próximo atendimento</p>
               <StatusPill status={proximoAgendamento.status} />
             </div>
-          ) : (
-            <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>
-          )}
-        </div>
+
+            <div className="agendamento-hero-next-tiles">
+              <div className="agendamento-hero-tile">
+                <span className="agendamento-hero-tile-icon" aria-hidden="true">
+                  <CalendarIcon width={16} height={16} />
+                </span>
+                <span>{formatHeroDate(proximoAgendamento.data).dia}</span>
+              </div>
+              <div className="agendamento-hero-tile">
+                <span className="agendamento-hero-tile-icon" aria-hidden="true">
+                  <ClockIcon width={16} height={16} />
+                </span>
+                <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
+              </div>
+            </div>
+
+            <div className="agendamento-hero-next-people">
+              <span>{getMedicoNome(proximoAgendamento)}</span>
+              <small>{getPacienteNome(proximoAgendamento)}</small>
+            </div>
+          </div>
+        ) : (
+          <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>
+        )}
       </section>
 
       {selectedAgendamento ? (
