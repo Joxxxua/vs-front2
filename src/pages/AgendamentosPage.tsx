@@ -9,6 +9,9 @@ import type { Agendamento, StatusAgendamento } from '../types/agendamento'
 import { ApiError } from '../lib/api'
 import { getMedicoNome, getPacienteNome } from '../lib/agendamentoLabels'
 import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  PlusIcon,
   SearchIcon,
   StatusAgendadoIcon,
   StatusCanceladoIcon,
@@ -489,11 +492,16 @@ export default function AgendamentosPage() {
               >
                 Ver lista em cards
               </button>
-              <button type="button" onClick={() => setSemanaAtual(getCurrentWeekStart(new Date()))}>
+              <button
+                type="button"
+                className="weekly-ghost-button"
+                onClick={() => setSemanaAtual(getCurrentWeekStart(new Date()))}
+              >
                 Hoje
               </button>
               <button
                 type="button"
+                className="weekly-ghost-button weekly-ghost-button-icon"
                 aria-label="Semana anterior"
                 onClick={() => {
                   const previous = new Date(semanaAtual)
@@ -501,10 +509,11 @@ export default function AgendamentosPage() {
                   setSemanaAtual(previous)
                 }}
               >
-                ←
+                <ChevronLeftIcon />
               </button>
               <button
                 type="button"
+                className="weekly-ghost-button weekly-ghost-button-icon"
                 aria-label="Próxima semana"
                 onClick={() => {
                   const next = new Date(semanaAtual)
@@ -512,10 +521,11 @@ export default function AgendamentosPage() {
                   setSemanaAtual(next)
                 }}
               >
-                →
+                <ChevronRightIcon />
               </button>
               <button type="button" className="weekly-new-button">
-                + Novo Agendamento
+                <PlusIcon width={16} height={16} />
+                Novo Agendamento
               </button>
             </div>
           </header>
@@ -563,15 +573,20 @@ export default function AgendamentosPage() {
                         hour: '2-digit',
                         minute: '2-digit',
                       }).format(date)
+                      const SlotStatusIcon = STATUS_ICONS[agendamento.status]
                       return (
                         <button
                           key={slotKey}
                           type="button"
                           role="gridcell"
                           className={`weekly-slot weekly-slot-filled ${STATUS_CLASSNAMES[agendamento.status]}`}
-                          aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}.`}
+                          title={STATUS_LABELS[agendamento.status]}
+                          aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}. Status: ${STATUS_LABELS[agendamento.status]}.`}
                           onClick={() => setSelectedAgendamento(agendamento)}
                         >
+                          <span className="weekly-slot-status-icon">
+                            <SlotStatusIcon width={12} height={12} />
+                          </span>
                           <strong className="weekly-slot-time">{horaFmt}</strong>
                           <span className="weekly-slot-paciente">{getPacienteNome(agendamento)}</span>
                           <span className="weekly-slot-medico">{getMedicoNome(agendamento)}</span>
@@ -587,14 +602,19 @@ export default function AgendamentosPage() {
                             hour: '2-digit',
                             minute: '2-digit',
                           }).format(date)
+                          const SlotStatusIcon = STATUS_ICONS[agendamento.status]
                           return (
                             <button
                               key={agendamento.id}
                               type="button"
                               className={`weekly-slot-item ${STATUS_CLASSNAMES[agendamento.status]}`}
-                              aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}.`}
+                              title={STATUS_LABELS[agendamento.status]}
+                              aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}. Status: ${STATUS_LABELS[agendamento.status]}.`}
                               onClick={() => setSelectedAgendamento(agendamento)}
                             >
+                              <span className="weekly-slot-status-icon">
+                                <SlotStatusIcon width={11} height={11} />
+                              </span>
                               <strong className="weekly-slot-time">{horaFmt}</strong>
                               <span className="weekly-slot-paciente">{getPacienteNome(agendamento)}</span>
                               <span className="weekly-slot-medico">{getMedicoNome(agendamento)}</span>

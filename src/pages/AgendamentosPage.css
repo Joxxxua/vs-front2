@@ -326,10 +326,10 @@
 }
 
 .weekly-board {
-  border-radius: 24px;
-  border: 1px solid var(--line-soft);
-  background: var(--bg-elevated);
-  padding: 0.95rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-1);
+  padding: var(--space-4);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
@@ -347,30 +347,39 @@
   margin: 0;
 }
 
+.weekly-header h2 {
+  color: var(--text-primary);
+}
+
 .weekly-header p {
   color: var(--text-secondary);
 }
 
 .weekly-actions {
   display: flex;
-  gap: 0.45rem;
+  gap: var(--space-2);
   flex-wrap: wrap;
   align-items: center;
 }
 
+.weekly-actions button[aria-label] {
+  padding: 0 var(--space-3);
+}
+
 .weekly-ver-lista-button {
-  border: 1px solid var(--line-strong) !important;
-  background: var(--bg-elevated) !important;
-  color: var(--text-main) !important;
+  border: 1px solid var(--border-strong) !important;
+  background: var(--surface-2) !important;
+  color: var(--text-primary) !important;
   font-weight: 600;
-  border-radius: 999px;
-  padding: 0.52rem 0.95rem !important;
+  border-radius: var(--radius-pill);
+  padding: 0 var(--space-4) !important;
   cursor: pointer;
 }
 
 .weekly-ver-lista-button:hover {
-  border-color: var(--accent-strong) !important;
-  background: #f4fbe8 !important;
+  border-color: var(--brand-500) !important;
+  background: var(--surface-1) !important;
+  filter: none !important;
 }
 
 .lista-view-wrap {
@@ -385,52 +394,71 @@
 }
 
 .lista-ver-agenda-button {
-  border: 1px solid var(--line-strong);
-  background: var(--bg-elevated);
-  color: var(--text-main);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text-primary);
   font-weight: 600;
-  border-radius: 999px;
-  padding: 0.52rem 0.95rem;
+  border-radius: var(--radius-pill);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
   cursor: pointer;
 }
 
 .lista-ver-agenda-button:hover {
-  border-color: var(--accent-strong);
-  background: #f4fbe8;
+  border-color: var(--brand-500);
+  background: var(--surface-1);
 }
 
 .weekly-empty-hint {
-  margin: 0 0 0.85rem;
-  padding: 0.55rem 0.75rem;
-  border-radius: 12px;
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
   font-size: 0.88rem;
   color: var(--text-secondary);
-  background: #f6faf3;
-  border: 1px dashed var(--line-soft);
+  background: var(--surface-2);
+  border: 1px dashed var(--border-strong);
 }
 
 .weekly-new-button {
-  background: #1f2e17 !important;
-  color: var(--text-inverse) !important;
+  background: var(--brand-gradient) !important;
+  color: var(--text-on-brand) !important;
+  box-shadow: var(--shadow-brand);
+}
+
+.weekly-ghost-button {
+  background: var(--surface-2) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-strong) !important;
+  box-shadow: none !important;
+}
+
+.weekly-ghost-button:hover {
+  border-color: var(--brand-500) !important;
+  background: var(--surface-1) !important;
+  filter: none !important;
+}
+
+.weekly-ghost-button-icon {
+  padding: 0 !important;
+  width: var(--tap-min);
 }
 
 .weekly-grid-wrapper {
   overflow-x: auto;
-  padding: 8px;
-  border-radius: 16px;
-  background: #e4ebe0;
-  border: 1px solid var(--line-soft);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
 }
 
 .weekly-grid {
   min-width: 980px;
   display: grid;
   grid-template-columns: 88px repeat(7, minmax(0, 1fr));
-  grid-template-rows: 48px repeat(15, 52px);
+  grid-template-rows: 48px repeat(15, 56px);
   gap: 6px;
   padding: 2px;
-  border-radius: 12px;
-  background: #eef2eb;
+  border-radius: var(--radius-sm);
 }
 
 .weekly-grid-corner,
@@ -441,9 +469,9 @@
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
-  border-radius: 10px;
-  border: 1px solid #d5e0cf;
-  background: #fbfcf9;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-1);
   font-size: 0.82rem;
   color: var(--text-secondary);
   font-weight: 600;
@@ -454,9 +482,10 @@
 }
 
 .weekly-grid-day-header.today-column {
-  background: #e6f5d8;
-  color: #324a20;
-  border-color: #c5dcb8;
+  background: var(--brand-gradient);
+  color: var(--text-on-brand);
+  border-color: transparent;
+  font-weight: 700;
 }
 
 .weekly-grid-time-label {
@@ -466,30 +495,31 @@
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
-  border-radius: 10px;
-  border: 1px solid #dce5d6;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
   font-size: 0.76rem;
   color: var(--text-secondary);
-  background: #ffffff;
+  background: var(--surface-1);
 }
 
 .weekly-slot-empty {
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
-  border-radius: 10px;
-  border: 1px dashed #c9d4c2;
-  background: #fdfefd;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border-subtle);
+  background: transparent;
 }
 
 .weekly-slot.weekly-slot-filled {
   box-sizing: border-box;
+  position: relative;
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 0.38rem 0.48rem 0.42rem;
-  border: 1px solid rgba(20, 29, 19, 0.16);
-  border-radius: 10px;
+  padding: 0.4rem 1.6rem 0.42rem 0.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -500,18 +530,38 @@
   text-align: left;
   cursor: pointer;
   overflow: hidden;
-  color: #0f1510;
-  box-shadow: 0 2px 6px rgba(20, 29, 19, 0.08);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.weekly-slot.weekly-slot-filled:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.weekly-slot.weekly-slot-filled:focus-visible,
+.weekly-slot-item:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.weekly-slot-status-icon {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  display: inline-flex;
 }
 
 .weekly-slot-time {
-  font-size: 0.64rem;
+  font-size: 0.68rem;
+  font-weight: 700;
   line-height: 1.15;
   flex-shrink: 0;
 }
 
 .weekly-slot-paciente {
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   line-height: 1.18;
   font-weight: 600;
   white-space: nowrap;
@@ -521,10 +571,9 @@
 }
 
 .weekly-slot-medico {
-  font-size: 0.54rem;
+  font-size: 0.56rem;
   line-height: 1.15;
-  color: #2d3d30;
-  opacity: 0.95;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -533,22 +582,33 @@
 
 .weekly-slot.weekly-slot-filled.status-agendado,
 .weekly-slot-item.status-agendado {
-  background: rgba(74, 143, 255, 0.26);
+  background: var(--status-agendado-bg);
+  color: var(--status-agendado);
 }
 
 .weekly-slot.weekly-slot-filled.status-confirmado,
 .weekly-slot-item.status-confirmado {
-  background: rgba(51, 176, 109, 0.28);
+  background: var(--brand-gradient);
+  color: var(--text-on-brand);
+  border-color: transparent;
+}
+
+.weekly-slot.weekly-slot-filled.status-confirmado .weekly-slot-medico,
+.weekly-slot-item.status-confirmado .weekly-slot-medico {
+  color: var(--text-on-brand);
+  opacity: 0.75;
 }
 
 .weekly-slot.weekly-slot-filled.status-cancelado,
 .weekly-slot-item.status-cancelado {
-  background: rgba(219, 78, 78, 0.24);
+  background: var(--status-cancelado-bg);
+  color: var(--status-cancelado);
 }
 
 .weekly-slot.weekly-slot-filled.status-realizado,
 .weekly-slot-item.status-realizado {
-  background: rgba(36, 90, 58, 0.26);
+  background: var(--status-realizado-bg);
+  color: var(--status-realizado);
 }
 
 .weekly-slot-stack {
@@ -565,12 +625,13 @@
 }
 
 .weekly-slot-item {
+  position: relative;
   flex: 1;
   min-height: 0;
   margin: 0;
-  padding: 0.28rem 0.4rem 0.3rem;
-  border: 1px solid rgba(20, 29, 19, 0.14);
-  border-radius: 9px;
+  padding: 0.3rem 1.4rem 0.3rem 0.4rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: calc(var(--radius-sm) - 2px);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -579,8 +640,13 @@
   text-align: left;
   cursor: pointer;
   overflow: hidden;
-  color: #0f1510;
-  box-shadow: 0 1px 4px rgba(20, 29, 19, 0.07);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.weekly-slot-item:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
 }
 
 .modal-overlay {
