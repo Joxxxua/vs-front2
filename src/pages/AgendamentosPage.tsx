@@ -180,6 +180,24 @@ function getCurrentWeekStart(baseDate: Date) {
   return getStartOfDay(date)
 }
 
+function getTodayIndexInWeek(weekStart: Date) {
+  const diff = Math.round((getStartOfDay(new Date()).getTime() - weekStart.getTime()) / 86400000)
+  return diff >= 0 && diff <= 6 ? diff : 0
+}
+
+function agendamentosDoDia(lista: Agendamento[], dia: Date) {
+  return lista
+    .filter((agendamento) => {
+      const d = parseDateInLocal(agendamento.data)
+      return (
+        d.getFullYear() === dia.getFullYear() &&
+        d.getMonth() === dia.getMonth() &&
+        d.getDate() === dia.getDate()
+      )
+    })
+    .sort((a, b) => parseDateInLocal(a.data).getTime() - parseDateInLocal(b.data).getTime())
+}
+
 export default function AgendamentosPage() {
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -192,6 +210,9 @@ export default function AgendamentosPage() {
   const [dataFinal, setDataFinal] = useState('')
   const [loadingAcoes, setLoadingAcoes] = useState<Record<string, AcaoAgendamento | null>>({})
   const [semanaAtual, setSemanaAtual] = useState<Date>(() => getCurrentWeekStart(new Date()))
+  const [diaSelecionadoIndex, setDiaSelecionadoIndex] = useState(() =>
+    getTodayIndexInWeek(getCurrentWeekStart(new Date())),
+  )
   const [selectedAgendamento, setSelectedAgendamento] = useState<Agendamento | null>(null)
 
   async function carregarAgendamentos() {
@@ -278,6 +299,19 @@ export default function AgendamentosPage() {
       return date >= weekStart && date <= endOfWeek
     })
   }, [agendamentosFiltrados, semanaAtual])
+
+  const diaSelecionado = diasSemana[diaSelecionadoIndex] ?? diasSemana[0]
+
+  const agendamentosDiaSelecionado = useMemo(
+    () => agendamentosDoDia(agendamentosSemana, diaSelecionado),
+    [agendamentosSemana, diaSelecionado],
+  )
+
+  function handleHoje() {
+    const weekStart = getCurrentWeekStart(new Date())
+    setSemanaAtual(weekStart)
+    setDiaSelecionadoIndex(getTodayIndexInWeek(weekStart))
+  }
 
   async function handleAcao(agendamento: Agendamento, acao: AcaoAgendamento) {
     setLoadingAcoes((current) => ({ ...current, [agendamento.id]: acao }))
@@ -561,11 +595,7 @@ export default function AgendamentosPage() {
               >
                 Ver lista em cards
               </button>
-              <button
-                type="button"
-                className="weekly-ghost-button"
-                onClick={() => setSemanaAtual(getCurrentWeekStart(new Date()))}
-              >
+              <button type="button" className="weekly-ghost-button" onClick={handleHoje}>
                 Hoje
               </button>
               <button
@@ -605,6 +635,65 @@ export default function AgendamentosPage() {
               horários de 07:00 a 21:00.
             </p>
           ) : null}
+
+          <div className="weekly-day-strip" role="tablist" aria-label="Selecionar dia da semana">
+            {diasSemana.map((dia, index) => {
+              const isToday = getStartOfDay(dia).getTime() === getStartOfDay(new Date()).getTime()
+              const isSelected = index === diaSelecionadoIndex
+              return (
+                <button
+                  key={slotDiaKey(dia)}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  className={
+                    isSelected
+                      ? 'weekly-day-strip-item is-selected'
+                      : isToday
+                        ? 'weekly-day-strip-item is-today'
+                        : 'weekly-day-strip-item'
+                  }
+                  onClick={() => setDiaSelecionadoIndex(index)}
+                >
+                  <span className="weekly-day-strip-weekday">
+                    {new Intl.DateTimeFormat('pt-BR', { weekday: 'short' }).format(dia)}
+                  </span>
+                  <span className="weekly-day-strip-day">{dia.getDate()}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="weekly-day-agenda" aria-label="Agenda do dia selecionado">
+            {agendamentosDiaSelecionado.length === 0 ? (
+              <p className="weekly-day-agenda-empty">Nenhum agendamento neste dia.</p>
+            ) : (
+              <ul className="weekly-day-agenda-list">
+                {agendamentosDiaSelecionado.map((agendamento) => {
+                  const horaFmt = new Intl.DateTimeFormat('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  }).format(parseDateInLocal(agendamento.data))
+                  return (
+                    <li key={agendamento.id}>
+                      <button
+                        type="button"
+                        className="weekly-day-agenda-row"
+                        onClick={() => setSelectedAgendamento(agendamento)}
+                      >
+                        <span className="weekly-day-agenda-time">{horaFmt}</span>
+                        <span className="weekly-day-agenda-info">
+                          <strong>{getPacienteNome(agendamento)}</strong>
+                          <small>{getMedicoNome(agendamento)}</small>
+                        </span>
+                        <StatusPill status={agendamento.status} />
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
 
           <div className="weekly-grid-wrapper">
             <div className="weekly-grid" role="grid" aria-label="Grade semanal por horário">

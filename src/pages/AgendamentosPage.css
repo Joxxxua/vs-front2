@@ -655,8 +655,8 @@
 }
 
 .weekly-grid-day-header.today-column {
-  background: var(--brand-gradient);
-  color: var(--text-on-brand);
+  background: var(--brand-soft-bg);
+  color: var(--status-confirmado);
   border-color: transparent;
   font-weight: 700;
 }
@@ -761,15 +761,8 @@
 
 .weekly-slot.weekly-slot-filled.status-confirmado,
 .weekly-slot-item.status-confirmado {
-  background: var(--brand-gradient);
-  color: var(--text-on-brand);
-  border-color: transparent;
-}
-
-.weekly-slot.weekly-slot-filled.status-confirmado .weekly-slot-medico,
-.weekly-slot-item.status-confirmado .weekly-slot-medico {
-  color: var(--text-on-brand);
-  opacity: 0.75;
+  background: var(--status-confirmado-bg);
+  color: var(--status-confirmado);
 }
 
 .weekly-slot.weekly-slot-filled.status-cancelado,
@@ -867,6 +860,14 @@
   margin-left: auto;
 }
 
+.weekly-day-strip {
+  display: none;
+}
+
+.weekly-day-agenda {
+  display: none;
+}
+
 @media (max-width: 960px) {
   .filter-panel {
     grid-template-columns: 1fr 1fr;
@@ -876,5 +877,136 @@
 @media (max-width: 640px) {
   .filter-panel {
     grid-template-columns: 1fr;
+  }
+
+  .weekly-empty-hint {
+    display: none;
+  }
+
+  .weekly-grid-wrapper {
+    display: none;
+  }
+
+  .weekly-day-strip {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    padding: 0.2rem 0.1rem 0.6rem;
+    margin-bottom: var(--space-2);
+  }
+
+  .weekly-day-strip-item {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    width: 44px;
+    min-height: 56px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--surface-1);
+    color: var(--text-secondary);
+    padding: 0.45rem 0;
+    cursor: pointer;
+    transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
+  }
+
+  .weekly-day-strip-weekday {
+    font-size: 0.66rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .weekly-day-strip-day {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .weekly-day-strip-item.is-today {
+    border-color: var(--status-confirmado);
+    color: var(--status-confirmado);
+  }
+
+  .weekly-day-strip-item.is-selected {
+    border-color: transparent;
+    background: var(--brand-500);
+    color: var(--text-on-brand);
+  }
+
+  .weekly-day-agenda {
+    display: block;
+  }
+
+  .weekly-day-agenda-empty {
+    margin: 0;
+    padding: var(--space-4);
+    text-align: center;
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--border-strong);
+    background: var(--surface-1);
+    color: var(--text-secondary);
+  }
+
+  .weekly-day-agenda-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .weekly-day-agenda-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--surface-1);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-3);
+    min-height: 60px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--transition-base), transform var(--transition-base);
+  }
+
+  .weekly-day-agenda-row:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+  }
+
+  .weekly-day-agenda-row .status-pill {
+    white-space: nowrap;
+  }
+
+  .weekly-day-agenda-time {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 0.92rem;
+  }
+
+  .weekly-day-agenda-info {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .weekly-day-agenda-info strong {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .weekly-day-agenda-info small {
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
