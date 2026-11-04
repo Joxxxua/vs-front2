@@ -8,6 +8,19 @@ import {
 import type { Agendamento, StatusAgendamento } from '../types/agendamento'
 import { ApiError } from '../lib/api'
 import { getMedicoNome, getPacienteNome } from '../lib/agendamentoLabels'
+import {
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ClockIcon,
+  FilterIcon,
+  PlusIcon,
+  SearchIcon,
+  StatusAgendadoIcon,
+  StatusCanceladoIcon,
+  StatusConfirmadoIcon,
+  StatusRealizadoIcon,
+} from '../components/icons'
 import './AgendamentosPage.css'
 
 type ModoVisualizacao = 'LISTA' | 'SEMANAL'
@@ -35,7 +48,31 @@ const STATUS_CLASSNAMES: Record<StatusAgendamento, string> = {
   REALIZADO: 'status-realizado',
 }
 
-const HOURS = Array.from({ length: 15 }, (_, index) => index + 7)
+const STATUS_ICONS: Record<StatusAgendamento, typeof StatusAgendadoIcon> = {
+  AGENDADO: StatusAgendadoIcon,
+  CONFIRMADO: StatusConfirmadoIcon,
+  CANCELADO: StatusCanceladoIcon,
+  REALIZADO: StatusRealizadoIcon,
+}
+
+function StatusPill({ status }: { status: StatusAgendamento }) {
+  const Icon = STATUS_ICONS[status]
+  return (
+    <span className={`status-pill ${STATUS_CLASSNAMES[status]}`}>
+      <Icon width={13} height={13} />
+      {STATUS_LABELS[status]}
+    </span>
+  )
+}
+
+const GRADE_HORA_INICIAL_PADRAO = 8
+const GRADE_HORA_FINAL_PADRAO = 18
+// Must match the pixel values baked into .weekly-grid's grid-template-rows
+// and gap in AgendamentosPage.css — used to position the current-time line.
+const GRADE_ALTURA_CABECALHO = 40
+const GRADE_ALTURA_LINHA = 52
+const GRADE_GAP = 6
+const GRADE_PADDING = 2
 
 function agendamentosNoSlotHora(lista: Agendamento[], dia: Date, hour: number): Agendamento[] {
   return lista.filter((agendamento) => {
@@ -146,6 +183,24 @@ function getCurrentWeekStart(baseDate: Date) {
   return getStartOfDay(date)
 }
 
+function getTodayIndexInWeek(weekStart: Date) {
+  const diff = Math.round((getStartOfDay(new Date()).getTime() - weekStart.getTime()) / 86400000)
+  return diff >= 0 && diff <= 6 ? diff : 0
+}
+
+function agendamentosDoDia(lista: Agendamento[], dia: Date) {
+  return lista
+    .filter((agendamento) => {
+      const d = parseDateInLocal(agendamento.data)
+      return (
+        d.getFullYear() === dia.getFullYear() &&
+        d.getMonth() === dia.getMonth() &&
+        d.getDate() === dia.getDate()
+      )
+    })
+    .sort((a, b) => parseDateInLocal(a.data).getTime() - parseDateInLocal(b.data).getTime())
+}
+
 export default function AgendamentosPage() {
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -156,8 +211,12 @@ export default function AgendamentosPage() {
   const [statusFiltro, setStatusFiltro] = useState<StatusAgendamento | ''>('')
   const [dataInicial, setDataInicial] = useState('')
   const [dataFinal, setDataFinal] = useState('')
+  const [filtrosAbertos, setFiltrosAbertos] = useState(false)
   const [loadingAcoes, setLoadingAcoes] = useState<Record<string, AcaoAgendamento | null>>({})
   const [semanaAtual, setSemanaAtual] = useState<Date>(() => getCurrentWeekStart(new Date()))
+  const [diaSelecionadoIndex, setDiaSelecionadoIndex] = useState(() =>
+    getTodayIndexInWeek(getCurrentWeekStart(new Date())),
+  )
   const [selectedAgendamento, setSelectedAgendamento] = useState<Agendamento | null>(null)
 
   async function carregarAgendamentos() {
@@ -245,6 +304,52 @@ export default function AgendamentosPage() {
     })
   }, [agendamentosFiltrados, semanaAtual])
 
+  const horasGrade = useMemo(() => {
+    const horasComAgendamento = agendamentosSemana.map((agendamento) =>
+      parseDateInLocal(agendamento.data).getHours(),
+    )
+    const minHora = Math.min(GRADE_HORA_INICIAL_PADRAO, ...horasComAgendamento)
+    const maxHora = Math.max(GRADE_HORA_FINAL_PADRAO, ...horasComAgendamento)
+    return Array.from({ length: maxHora - minHora + 1 }, (_, index) => index + minHora)
+  }, [agendamentosSemana])
+
+  const linhaHoraAtualTop = useMemo(() => {
+    const agora = new Date()
+    const estaNaSemana = diasSemana.some(
+      (dia) => getStartOfDay(dia).getTime() === getStartOfDay(agora).getTime(),
+    )
+    const hora = agora.getHours()
+    if (!estaNaSemana || hora < horasGrade[0] || hora > horasGrade[horasGrade.length - 1]) {
+      return null
+    }
+    const indiceHora = hora - horasGrade[0]
+    return (
+      GRADE_PADDING +
+      GRADE_ALTURA_CABECALHO +
+      GRADE_GAP +
+      indiceHora * (GRADE_ALTURA_LINHA + GRADE_GAP) +
+      (agora.getMinutes() / 60) * GRADE_ALTURA_LINHA
+    )
+  }, [diasSemana, horasGrade])
+
+  const diaSelecionado = diasSemana[diaSelecionadoIndex] ?? diasSemana[0]
+
+  const agendamentosDiaSelecionado = useMemo(
+    () => agendamentosDoDia(agendamentosSemana, diaSelecionado),
+    [agendamentosSemana, diaSelecionado],
+  )
+
+  const agendamentosHoje = useMemo(
+    () => agendamentosDoDia(agendamentosFiltrados, new Date()),
+    [agendamentosFiltrados],
+  )
+
+  function handleHoje() {
+    const weekStart = getCurrentWeekStart(new Date())
+    setSemanaAtual(weekStart)
+    setDiaSelecionadoIndex(getTodayIndexInWeek(weekStart))
+  }
+
   async function handleAcao(agendamento: Agendamento, acao: AcaoAgendamento) {
     setLoadingAcoes((current) => ({ ...current, [agendamento.id]: acao }))
     setFeedbackError('')
@@ -289,40 +394,105 @@ export default function AgendamentosPage() {
     month: 'short',
   }).format(diasSemana[6])}`
 
+  const hasFiltrosAtivos = Boolean(statusFiltro || dataInicial || dataFinal)
+
   return (
     <section className="agendamento-page">
-      <section className="agendamento-controls">
-        <div className="chip-group" role="tablist" aria-label="Filtrar por especialidade">
-          {especialidadesDisponiveis.map((especialidade) => (
+      <header className="agenda-toolbar">
+        <div className="agenda-toolbar-title">
+          <h1>Agenda</h1>
+          {viewMode === 'SEMANAL' ? <span className="agenda-toolbar-range">{weekLabel}</span> : null}
+        </div>
+
+        <div className="agenda-toolbar-controls">
+          <div className="specialty-pills" role="tablist" aria-label="Filtrar por especialidade">
+            {especialidadesDisponiveis.map((especialidade) => {
+              const isActive = especialidadeChip === especialidade
+              return (
+                <button
+                  key={especialidade}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  className={isActive ? 'specialty-pill is-active' : 'specialty-pill'}
+                  onClick={() => setEspecialidadeChip(especialidade)}
+                >
+                  {especialidade}
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="view-toggle" role="tablist" aria-label="Alternador de visualização">
             <button
-              key={especialidade}
               type="button"
-              className={especialidadeChip === especialidade ? 'chip chip-active' : 'chip'}
-              onClick={() => setEspecialidadeChip(especialidade)}
+              className={viewMode === 'LISTA' ? 'view-active' : ''}
+              onClick={() => setViewMode('LISTA')}
             >
-              {especialidade}
+              Lista
             </button>
-          ))}
-        </div>
+            <button
+              type="button"
+              className={viewMode === 'SEMANAL' ? 'view-active' : ''}
+              onClick={() => setViewMode('SEMANAL')}
+            >
+              Agenda
+            </button>
+          </div>
 
-        <div className="view-toggle" role="tablist" aria-label="Alternador de visualização">
           <button
             type="button"
-            className={viewMode === 'LISTA' ? 'view-active' : ''}
-            onClick={() => setViewMode('LISTA')}
+            className="filtros-toggle"
+            aria-expanded={filtrosAbertos}
+            aria-controls="filtros-panel"
+            onClick={() => setFiltrosAbertos((current) => !current)}
           >
-            Lista
+            <FilterIcon width={15} height={15} />
+            Filtros
+            {hasFiltrosAtivos ? <span className="filtros-dot" aria-hidden="true" /> : null}
           </button>
-          <button
-            type="button"
-            className={viewMode === 'SEMANAL' ? 'view-active' : ''}
-            onClick={() => setViewMode('SEMANAL')}
-          >
-            Agenda Semanal
+
+          {viewMode === 'SEMANAL' ? (
+            <div className="agenda-toolbar-week-actions">
+              <button type="button" className="toolbar-ghost-button" onClick={handleHoje}>
+                Hoje
+              </button>
+              <button
+                type="button"
+                className="toolbar-ghost-button toolbar-icon-button"
+                aria-label="Semana anterior"
+                onClick={() => {
+                  const previous = new Date(semanaAtual)
+                  previous.setDate(previous.getDate() - 7)
+                  setSemanaAtual(previous)
+                }}
+              >
+                <ChevronLeftIcon />
+              </button>
+              <button
+                type="button"
+                className="toolbar-ghost-button toolbar-icon-button"
+                aria-label="Próxima semana"
+                onClick={() => {
+                  const next = new Date(semanaAtual)
+                  next.setDate(next.getDate() + 7)
+                  setSemanaAtual(next)
+                }}
+              >
+                <ChevronRightIcon />
+              </button>
+            </div>
+          ) : null}
+
+          <button type="button" className="toolbar-new-button" aria-label="Novo Agendamento">
+            <PlusIcon width={16} height={16} aria-hidden="true" />
+            <span className="toolbar-new-button-label">Novo Agendamento</span>
           </button>
         </div>
+      </header>
 
-        <div className="filter-panel">
+      {filtrosAbertos ? (
+        <section id="filtros-panel" className="filters-panel">
           <label>
             Status
             <select
@@ -352,13 +522,30 @@ export default function AgendamentosPage() {
           </label>
 
           <button type="button" onClick={handleBuscar}>
+            <SearchIcon width={16} height={16} />
             Buscar
           </button>
           <button type="button" className="ghost-action" onClick={handleLimpar}>
             Limpar
           </button>
-        </div>
-      </section>
+        </section>
+      ) : null}
+
+      <div className="agendamento-mobile-strip">
+        <p className="mobile-strip-greeting">Olá! Painel Vida Saudável</p>
+        {proximoAgendamento ? (
+          <div className="mobile-strip-next">
+            <ClockIcon width={14} height={14} aria-hidden="true" />
+            <span>
+              Próximo: {formatHeroDate(proximoAgendamento.data).horario} —{' '}
+              {getPacienteNome(proximoAgendamento)}
+            </span>
+            <StatusPill status={proximoAgendamento.status} />
+          </div>
+        ) : (
+          <p className="mobile-strip-empty">Nenhum próximo agendamento.</p>
+        )}
+      </div>
 
       {feedbackSuccess ? (
         <p role="status" aria-live="polite" className="feedback-success">
@@ -371,32 +558,38 @@ export default function AgendamentosPage() {
         </p>
       ) : null}
 
-      {isLoading ? <p className="loading-state">Carregando agendamentos...</p> : null}
+      {isLoading ? (
+        <div className="loading-skeleton" role="status" aria-live="polite">
+          <span className="sr-only">Carregando agendamentos...</span>
+          <span className="loading-skeleton-bar loading-skeleton-bar-wide" aria-hidden="true" />
+          <span className="loading-skeleton-bar" aria-hidden="true" />
+          <span className="loading-skeleton-bar loading-skeleton-bar-short" aria-hidden="true" />
+        </div>
+      ) : null}
 
+      <div className="agendamento-layout">
+      <main className="agendamento-main">
       {!isLoading && viewMode === 'LISTA' && agendamentosFiltrados.length === 0 ? (
         <p className="empty-state">Nenhum agendamento encontrado.</p>
       ) : null}
 
       {!isLoading && viewMode === 'LISTA' && agendamentosFiltrados.length > 0 ? (
-        <div className="lista-view-wrap">
-          <div className="lista-view-toolbar">
-            <button type="button" className="lista-ver-agenda-button" onClick={() => setViewMode('SEMANAL')}>
-              Ver agenda semanal
-            </button>
-          </div>
           <section className="card-grid">
           {agendamentosFiltrados.map((agendamento) => {
             const acaoAtual = loadingAcoes[agendamento.id]
             return (
               <article key={agendamento.id} className="appointment-card">
                 <header>
-                  <div>
-                    <p>{formatCompleteDate(agendamento.data)}</p>
-                    <strong>{getTipoNome(agendamento)}</strong>
+                  <div className="appointment-card-heading">
+                    <span className="appointment-card-icon" aria-hidden="true">
+                      <CalendarIcon width={18} height={18} />
+                    </span>
+                    <div>
+                      <strong>{getTipoNome(agendamento)}</strong>
+                      <p>{formatCompleteDate(agendamento.data)}</p>
+                    </div>
                   </div>
-                  <span className={`status-pill ${STATUS_CLASSNAMES[agendamento.status]}`}>
-                    {STATUS_LABELS[agendamento.status]}
-                  </span>
+                  <StatusPill status={agendamento.status} />
                 </header>
 
                 <dl>
@@ -448,61 +641,76 @@ export default function AgendamentosPage() {
             )
           })}
           </section>
-        </div>
       ) : null}
 
       {!isLoading && viewMode === 'SEMANAL' ? (
         <section className="weekly-board">
-          <header className="weekly-header">
-            <div>
-              <h2>Agenda Semanal</h2>
-              <p>{weekLabel}</p>
-            </div>
-            <div className="weekly-actions">
-              <button
-                type="button"
-                className="weekly-ver-lista-button"
-                onClick={() => setViewMode('LISTA')}
-              >
-                Ver lista em cards
-              </button>
-              <button type="button" onClick={() => setSemanaAtual(getCurrentWeekStart(new Date()))}>
-                Hoje
-              </button>
-              <button
-                type="button"
-                aria-label="Semana anterior"
-                onClick={() => {
-                  const previous = new Date(semanaAtual)
-                  previous.setDate(previous.getDate() - 7)
-                  setSemanaAtual(previous)
-                }}
-              >
-                ←
-              </button>
-              <button
-                type="button"
-                aria-label="Próxima semana"
-                onClick={() => {
-                  const next = new Date(semanaAtual)
-                  next.setDate(next.getDate() + 7)
-                  setSemanaAtual(next)
-                }}
-              >
-                →
-              </button>
-              <button type="button" className="weekly-new-button">
-                + Novo Agendamento
-              </button>
-            </div>
-          </header>
-
           {agendamentosSemana.length === 0 ? (
             <p className="weekly-empty-hint" role="status">
               Nenhum agendamento nesta semana com os filtros atuais. A grade abaixo mostra os
-              horários de 07:00 a 21:00.
+              horários de {String(horasGrade[0]).padStart(2, '0')}:00 a{' '}
+              {String(horasGrade[horasGrade.length - 1]).padStart(2, '0')}:00.
             </p>
           ) : null}
+
+          <div className="weekly-day-strip" role="tablist" aria-label="Selecionar dia da semana">
+            {diasSemana.map((dia, index) => {
+              const isToday = getStartOfDay(dia).getTime() === getStartOfDay(new Date()).getTime()
+              const isSelected = index === diaSelecionadoIndex
+              return (
+                <button
+                  key={slotDiaKey(dia)}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  className={
+                    isSelected
+                      ? 'weekly-day-strip-item is-selected'
+                      : isToday
+                        ? 'weekly-day-strip-item is-today'
+                        : 'weekly-day-strip-item'
+                  }
+                  onClick={() => setDiaSelecionadoIndex(index)}
+                >
+                  <span className="weekly-day-strip-weekday">
+                    {new Intl.DateTimeFormat('pt-BR', { weekday: 'short' }).format(dia)}
+                  </span>
+                  <span className="weekly-day-strip-day">{dia.getDate()}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="weekly-day-agenda" aria-label="Agenda do dia selecionado">
+            {agendamentosDiaSelecionado.length === 0 ? (
+              <p className="weekly-day-agenda-empty">Nenhum agendamento neste dia.</p>
+            ) : (
+              <ul className="weekly-day-agenda-list">
+                {agendamentosDiaSelecionado.map((agendamento) => {
+                  const horaFmt = new Intl.DateTimeFormat('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  }).format(parseDateInLocal(agendamento.data))
+                  return (
+                    <li key={agendamento.id}>
+                      <button
+                        type="button"
+                        className="weekly-day-agenda-row"
+                        onClick={() => setSelectedAgendamento(agendamento)}
+                      >
+                        <span className="weekly-day-agenda-time">{horaFmt}</span>
+                        <span className="weekly-day-agenda-info">
+                          <strong>{getPacienteNome(agendamento)}</strong>
+                          <small>{getMedicoNome(agendamento)}</small>
+                        </span>
+                        <StatusPill status={agendamento.status} />
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
 
           <div className="weekly-grid-wrapper">
             <div className="weekly-grid" role="grid" aria-label="Grade semanal por horário">
@@ -522,15 +730,22 @@ export default function AgendamentosPage() {
                 )
               })}
 
-              {HOURS.map((hour) => (
+              {horasGrade.map((hour) => (
                 <Fragment key={hour}>
                   <div className="weekly-grid-time-label">{String(hour).padStart(2, '0')}:00</div>
                   {diasSemana.map((dia) => {
                     const apps = agendamentosNoSlotHora(agendamentosSemana, dia, hour)
                     const slotKey = `slot-${slotDiaKey(dia)}-${hour}`
+                    const isToday = getStartOfDay(dia).getTime() === getStartOfDay(new Date()).getTime()
 
                     if (apps.length === 0) {
-                      return <div key={slotKey} className="weekly-slot-empty" role="gridcell" />
+                      return (
+                        <div
+                          key={slotKey}
+                          className={isToday ? 'weekly-slot-empty today-column' : 'weekly-slot-empty'}
+                          role="gridcell"
+                        />
+                      )
                     }
 
                     if (apps.length === 1) {
@@ -540,15 +755,20 @@ export default function AgendamentosPage() {
                         hour: '2-digit',
                         minute: '2-digit',
                       }).format(date)
+                      const SlotStatusIcon = STATUS_ICONS[agendamento.status]
                       return (
                         <button
                           key={slotKey}
                           type="button"
                           role="gridcell"
                           className={`weekly-slot weekly-slot-filled ${STATUS_CLASSNAMES[agendamento.status]}`}
-                          aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}.`}
+                          title={STATUS_LABELS[agendamento.status]}
+                          aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}. Status: ${STATUS_LABELS[agendamento.status]}.`}
                           onClick={() => setSelectedAgendamento(agendamento)}
                         >
+                          <span className="weekly-slot-status-icon">
+                            <SlotStatusIcon width={12} height={12} />
+                          </span>
                           <strong className="weekly-slot-time">{horaFmt}</strong>
                           <span className="weekly-slot-paciente">{getPacienteNome(agendamento)}</span>
                           <span className="weekly-slot-medico">{getMedicoNome(agendamento)}</span>
@@ -564,14 +784,19 @@ export default function AgendamentosPage() {
                             hour: '2-digit',
                             minute: '2-digit',
                           }).format(date)
+                          const SlotStatusIcon = STATUS_ICONS[agendamento.status]
                           return (
                             <button
                               key={agendamento.id}
                               type="button"
                               className={`weekly-slot-item ${STATUS_CLASSNAMES[agendamento.status]}`}
-                              aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}.`}
+                              title={STATUS_LABELS[agendamento.status]}
+                              aria-label={`${horaFmt}. Paciente: ${getPacienteNome(agendamento)}. Médico: ${getMedicoNome(agendamento)}. Status: ${STATUS_LABELS[agendamento.status]}.`}
                               onClick={() => setSelectedAgendamento(agendamento)}
                             >
+                              <span className="weekly-slot-status-icon">
+                                <SlotStatusIcon width={11} height={11} />
+                              </span>
                               <strong className="weekly-slot-time">{horaFmt}</strong>
                               <span className="weekly-slot-paciente">{getPacienteNome(agendamento)}</span>
                               <span className="weekly-slot-medico">{getMedicoNome(agendamento)}</span>
@@ -583,30 +808,94 @@ export default function AgendamentosPage() {
                   })}
                 </Fragment>
               ))}
+
+              {linhaHoraAtualTop !== null ? (
+                <div
+                  className="weekly-grid-now-line"
+                  style={{ top: `${linhaHoraAtualTop}px` }}
+                  aria-hidden="true"
+                />
+              ) : null}
             </div>
           </div>
         </section>
       ) : null}
+      </main>
 
-      <section className="agendamento-hero">
-        <div>
-          <p className="agendamento-hero-chip">Próximo compromisso</p>
-          <h1>Gestão clínica com visão total da agenda</h1>
+      <aside className="agendamento-sidebar">
+        <p className="sidebar-greeting">
+          <strong>Olá!</strong> Painel Vida Saudável
+        </p>
+
+        <div className="sidebar-hero">
           {proximoAgendamento ? (
             <div className="agendamento-hero-next">
-              <p>{formatHeroDate(proximoAgendamento.data).dia}</p>
-              <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
-              <span>{getMedicoNome(proximoAgendamento)}</span>
-              <small>{getPacienteNome(proximoAgendamento)}</small>
-              <em className={`status-pill ${STATUS_CLASSNAMES[proximoAgendamento.status]}`}>
-                {STATUS_LABELS[proximoAgendamento.status]}
-              </em>
+              <div className="agendamento-hero-next-header">
+                <p className="agendamento-hero-next-label">Próximo atendimento</p>
+                <StatusPill status={proximoAgendamento.status} />
+              </div>
+
+              <div className="agendamento-hero-next-tiles">
+                <div className="agendamento-hero-tile">
+                  <span className="agendamento-hero-tile-icon" aria-hidden="true">
+                    <CalendarIcon width={14} height={14} />
+                  </span>
+                  <span>{formatHeroDate(proximoAgendamento.data).dia}</span>
+                </div>
+                <div className="agendamento-hero-tile">
+                  <span className="agendamento-hero-tile-icon" aria-hidden="true">
+                    <ClockIcon width={14} height={14} />
+                  </span>
+                  <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
+                </div>
+              </div>
+
+              <div className="agendamento-hero-next-people">
+                <span>{getMedicoNome(proximoAgendamento)}</span>
+                <small>{getPacienteNome(proximoAgendamento)}</small>
+              </div>
             </div>
           ) : (
-            <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>
+            <div className="agendamento-hero-empty">
+              <p className="agendamento-hero-next-label">Próximo atendimento</p>
+              <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>
+            </div>
           )}
         </div>
-      </section>
+
+        <div className="sidebar-today">
+          <h2>Hoje</h2>
+          {agendamentosHoje.length === 0 ? (
+            <p className="sidebar-today-empty">Nenhum agendamento hoje.</p>
+          ) : (
+            <ul className="sidebar-today-list">
+              {agendamentosHoje.map((agendamento) => {
+                const horaFmt = new Intl.DateTimeFormat('pt-BR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }).format(parseDateInLocal(agendamento.data))
+                return (
+                  <li key={agendamento.id}>
+                    <button
+                      type="button"
+                      className="sidebar-today-row"
+                      onClick={() => setSelectedAgendamento(agendamento)}
+                    >
+                      <span className="sidebar-today-time">{horaFmt}</span>
+                      <span className="sidebar-today-info">
+                        <strong>{getPacienteNome(agendamento)}</strong>
+                        <small>{getMedicoNome(agendamento)}</small>
+                      </span>
+                      <StatusPill status={agendamento.status} />
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+      </aside>
+      </div>
 
       {selectedAgendamento ? (
         <div className="modal-overlay" role="dialog" aria-modal="true" aria-label="Detalhes do agendamento">
