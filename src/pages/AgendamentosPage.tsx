@@ -304,6 +304,11 @@ export default function AgendamentosPage() {
     [agendamentosSemana, diaSelecionado],
   )
 
+  const agendamentosHoje = useMemo(
+    () => agendamentosDoDia(agendamentosFiltrados, new Date()),
+    [agendamentosFiltrados],
+  )
+
   function handleHoje() {
     const weekStart = getCurrentWeekStart(new Date())
     setSemanaAtual(weekStart)
@@ -491,43 +496,21 @@ export default function AgendamentosPage() {
         </section>
       ) : null}
 
-      <section className="agendamento-hero" aria-label="Próximo atendimento">
+      <div className="agendamento-mobile-strip">
+        <p className="mobile-strip-greeting">Olá! Painel Vida Saudável</p>
         {proximoAgendamento ? (
-          <div className="agendamento-hero-next">
-            <div className="agendamento-hero-next-header">
-              <p className="agendamento-hero-next-label">Próximo atendimento</p>
-              <StatusPill status={proximoAgendamento.status} />
-            </div>
-
-            <div className="agendamento-hero-next-tiles">
-              <div className="agendamento-hero-tile">
-                <span className="agendamento-hero-tile-icon" aria-hidden="true">
-                  <CalendarIcon width={16} height={16} />
-                </span>
-                <span>{formatHeroDate(proximoAgendamento.data).dia}</span>
-              </div>
-              <div className="agendamento-hero-tile">
-                <span className="agendamento-hero-tile-icon" aria-hidden="true">
-                  <ClockIcon width={16} height={16} />
-                </span>
-                <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
-              </div>
-            </div>
-
-            <div className="agendamento-hero-next-people">
-              <span>{getMedicoNome(proximoAgendamento)}</span>
-              <small>{getPacienteNome(proximoAgendamento)}</small>
-            </div>
+          <div className="mobile-strip-next">
+            <ClockIcon width={14} height={14} aria-hidden="true" />
+            <span>
+              Próximo: {formatHeroDate(proximoAgendamento.data).horario} —{' '}
+              {getPacienteNome(proximoAgendamento)}
+            </span>
+            <StatusPill status={proximoAgendamento.status} />
           </div>
         ) : (
-          <div className="agendamento-hero-empty">
-            <p className="agendamento-hero-next-label">Próximo atendimento</p>
-            <p className="agendamento-no-next">
-              Nenhum próximo agendamento futuro com os filtros atuais.
-            </p>
-          </div>
+          <p className="mobile-strip-empty">Nenhum próximo agendamento.</p>
         )}
-      </section>
+      </div>
 
       {feedbackSuccess ? (
         <p role="status" aria-live="polite" className="feedback-success">
@@ -549,6 +532,8 @@ export default function AgendamentosPage() {
         </div>
       ) : null}
 
+      <div className="agendamento-layout">
+      <main className="agendamento-main">
       {!isLoading && viewMode === 'LISTA' && agendamentosFiltrados.length === 0 ? (
         <p className="empty-state">Nenhum agendamento encontrado.</p>
       ) : null}
@@ -784,6 +769,82 @@ export default function AgendamentosPage() {
           </div>
         </section>
       ) : null}
+      </main>
+
+      <aside className="agendamento-sidebar">
+        <p className="sidebar-greeting">
+          <strong>Olá!</strong> Painel Vida Saudável
+        </p>
+
+        <div className="sidebar-hero">
+          {proximoAgendamento ? (
+            <div className="agendamento-hero-next">
+              <div className="agendamento-hero-next-header">
+                <p className="agendamento-hero-next-label">Próximo atendimento</p>
+                <StatusPill status={proximoAgendamento.status} />
+              </div>
+
+              <div className="agendamento-hero-next-tiles">
+                <div className="agendamento-hero-tile">
+                  <span className="agendamento-hero-tile-icon" aria-hidden="true">
+                    <CalendarIcon width={14} height={14} />
+                  </span>
+                  <span>{formatHeroDate(proximoAgendamento.data).dia}</span>
+                </div>
+                <div className="agendamento-hero-tile">
+                  <span className="agendamento-hero-tile-icon" aria-hidden="true">
+                    <ClockIcon width={14} height={14} />
+                  </span>
+                  <strong>{formatHeroDate(proximoAgendamento.data).horario}</strong>
+                </div>
+              </div>
+
+              <div className="agendamento-hero-next-people">
+                <span>{getMedicoNome(proximoAgendamento)}</span>
+                <small>{getPacienteNome(proximoAgendamento)}</small>
+              </div>
+            </div>
+          ) : (
+            <div className="agendamento-hero-empty">
+              <p className="agendamento-hero-next-label">Próximo atendimento</p>
+              <p className="agendamento-no-next">Nenhum próximo agendamento futuro.</p>
+            </div>
+          )}
+        </div>
+
+        <div className="sidebar-today">
+          <h2>Hoje</h2>
+          {agendamentosHoje.length === 0 ? (
+            <p className="sidebar-today-empty">Nenhum agendamento hoje.</p>
+          ) : (
+            <ul className="sidebar-today-list">
+              {agendamentosHoje.map((agendamento) => {
+                const horaFmt = new Intl.DateTimeFormat('pt-BR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }).format(parseDateInLocal(agendamento.data))
+                return (
+                  <li key={agendamento.id}>
+                    <button
+                      type="button"
+                      className="sidebar-today-row"
+                      onClick={() => setSelectedAgendamento(agendamento)}
+                    >
+                      <span className="sidebar-today-time">{horaFmt}</span>
+                      <span className="sidebar-today-info">
+                        <strong>{getPacienteNome(agendamento)}</strong>
+                        <small>{getMedicoNome(agendamento)}</small>
+                      </span>
+                      <StatusPill status={agendamento.status} />
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+      </aside>
+      </div>
 
       {selectedAgendamento ? (
         <div className="modal-overlay" role="dialog" aria-modal="true" aria-label="Detalhes do agendamento">

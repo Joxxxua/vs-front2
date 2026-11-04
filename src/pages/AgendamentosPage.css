@@ -1,38 +1,6 @@
 .agendamento-page {
   display: grid;
-  gap: 1rem;
-}
-
-.agendamento-greeting {
-  display: grid;
-  gap: 0.3rem;
-}
-
-.agendamento-greeting-eyebrow {
-  margin: 0;
-  display: inline-flex;
-  align-self: start;
-  border-radius: var(--radius-pill);
-  background: var(--brand-soft-bg);
-  color: var(--brand-600);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.34rem 0.75rem;
-}
-
-.agendamento-greeting h1 {
-  margin: 0;
-  max-width: 34ch;
-  line-height: 1.16;
-  color: var(--text-primary);
-  font-weight: 700;
-  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
-}
-
-.agendamento-hero {
-  border-radius: var(--radius-lg);
+  gap: 0.85rem;
 }
 
 .agendamento-no-next {
@@ -126,6 +94,147 @@
 
 .agendamento-hero-next-people small {
   opacity: 0.85;
+}
+
+.agendamento-mobile-strip {
+  display: none;
+}
+
+.agendamento-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 0.85rem;
+  align-items: start;
+}
+
+.agendamento-main {
+  min-width: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.agendamento-sidebar {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  position: sticky;
+  top: var(--space-4);
+}
+
+.sidebar-greeting {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+}
+
+.sidebar-greeting strong {
+  color: var(--text-primary);
+}
+
+.sidebar-hero .agendamento-hero-next {
+  padding: var(--space-3) var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  gap: 0.6rem;
+}
+
+.sidebar-hero .agendamento-hero-next-tiles {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+}
+
+.sidebar-hero .agendamento-hero-tile {
+  font-size: 0.82rem;
+}
+
+.sidebar-hero .agendamento-hero-empty {
+  padding: var(--space-3) var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.sidebar-today {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-3);
+}
+
+.sidebar-today h2 {
+  margin: 0 0 0.6rem;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.sidebar-today-empty {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+
+.sidebar-today-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.sidebar-today-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: 'time status' 'info info';
+  align-items: center;
+  gap: 0.2rem 0.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--transition-base);
+}
+
+.sidebar-today-row:hover {
+  border-color: var(--border-strong);
+}
+
+.sidebar-today-time {
+  grid-area: time;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+}
+
+.sidebar-today-row .status-pill {
+  grid-area: status;
+  justify-self: end;
+}
+
+.sidebar-today-info {
+  grid-area: info;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.sidebar-today-info strong {
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-today-info small {
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .agenda-toolbar {
@@ -887,6 +996,16 @@
   display: none;
 }
 
+@media (max-width: 1080px) {
+  .agendamento-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .agendamento-sidebar {
+    position: static;
+  }
+}
+
 @media (max-width: 960px) {
   .filters-panel {
     grid-template-columns: 1fr 1fr;
@@ -896,6 +1015,56 @@
 @media (max-width: 640px) {
   .filters-panel {
     grid-template-columns: 1fr;
+  }
+
+  .agendamento-sidebar {
+    display: none;
+  }
+
+  .agendamento-mobile-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border-radius: var(--radius-md);
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-sm);
+    padding: 0.6rem 0.75rem;
+  }
+
+  .mobile-strip-greeting {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .mobile-strip-next {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-primary);
+    font-size: 0.84rem;
+    font-weight: 600;
+  }
+
+  .mobile-strip-next svg {
+    flex-shrink: 0;
+    color: var(--brand-600);
+  }
+
+  .mobile-strip-next span {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-strip-empty {
+    margin: 0;
+    font-size: 0.84rem;
+    color: var(--text-secondary);
   }
 
   .weekly-empty-hint {
