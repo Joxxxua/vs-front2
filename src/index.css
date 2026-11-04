@@ -2,39 +2,46 @@
   --font-sans: 'Poppins', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Surfaces */
-  --bg-page: #0b0d0c;
-  --bg-page-soft: #111412;
-  --surface-1: #171a18;
-  --surface-2: #1e221f;
-  --surface-glass: rgba(23, 26, 24, 0.86);
+  --bg-page: #f4f7f5;
+  --bg-page-soft: #edf3ef;
+  --surface-1: #ffffff;
+  --surface-2: #f0f5f2;
+  --surface-glass: rgba(255, 255, 255, 0.86);
 
-  --border-subtle: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.16);
+  --border-subtle: #e3eae5;
+  --border-strong: #c7d8cd;
 
-  /* Brand */
-  --brand-600: #12a150;
-  --brand-500: #16b45b;
+  /* Brand green: #12A150 carries every primary action; #0F9A48 is the
+     darker hover/pressed step. Both pair with dark ink text (see
+     --text-on-brand) — white fails AA against either at body-text sizes. */
+  --brand-600: #0f9a48;
+  --brand-500: #12a150;
   --brand-gradient: linear-gradient(135deg, var(--brand-600), var(--brand-500));
-  --brand-ink: #06130b;
-  --brand-soft-bg: rgba(22, 180, 91, 0.14);
+  /* Hero-card-only gradient: darkened from the brand brief's literal
+     #0E8A43→#16B45B so light text clears 4.5:1 at both stops. */
+  --brand-hero-gradient: linear-gradient(135deg, #0a6e36, #0d8140);
+  --brand-ink: #0f1a14;
+  --brand-soft-bg: #e6f6ec;
 
   /* Text */
-  --text-primary: #f2f5f3;
-  --text-secondary: #9aa59e;
+  --text-primary: #0f1a14;
+  --text-secondary: #5b6b62;
+  --text-disabled: #9aa79f;
   --text-on-brand: var(--brand-ink);
+  --text-on-hero: #ffffff;
 
   /* Status (each paired with an icon/label, never color alone) */
-  --status-agendado: #5b9cff;
-  --status-agendado-bg: rgba(91, 156, 255, 0.16);
-  --status-confirmado: #2fd16b;
-  --status-confirmado-bg: rgba(22, 180, 91, 0.18);
-  --status-cancelado: #ff6b6b;
-  --status-cancelado-bg: rgba(255, 107, 107, 0.16);
-  --status-realizado: #b7c4be;
-  --status-realizado-bg: rgba(154, 165, 158, 0.16);
+  --status-agendado: #135f7e;
+  --status-agendado-bg: #dceff6;
+  --status-confirmado: #0c7a3a;
+  --status-confirmado-bg: #e6f6ec;
+  --status-cancelado: #b23232;
+  --status-cancelado-bg: #fbe4e4;
+  --status-realizado: #5b6b62;
+  --status-realizado-bg: #e7ece9;
 
-  --danger: #ff6b6b;
-  --danger-bg: rgba(255, 107, 107, 0.14);
+  --danger: #b23232;
+  --danger-bg: #fbe4e4;
 
   /* Radius */
   --radius-sm: 12px;
@@ -51,17 +58,60 @@
   --space-6: 2rem;
 
   /* Elevation */
-  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.32);
-  --shadow-md: 0 24px 60px rgba(0, 0, 0, 0.5);
-  --shadow-brand: 0 14px 34px rgba(18, 161, 80, 0.3);
+  --shadow-sm: 0 8px 24px rgba(16, 40, 28, 0.06);
+  --shadow-md: 0 24px 60px rgba(16, 40, 28, 0.1);
+  --shadow-brand: 0 14px 34px rgba(10, 110, 54, 0.22);
 
   /* Motion */
   --transition-base: 180ms ease;
   --transition-fast: 120ms ease;
-  --focus-ring: 0 0 0 3px rgba(22, 180, 91, 0.5);
+  --focus-ring: 0 0 0 3px rgba(18, 161, 80, 0.5);
 
   /* Touch */
   --tap-min: 44px;
+}
+
+/* Dormant dark variant: kept in sync with the system that shipped before
+   this redesign, so dark can return as an explicit opt-in later. Nothing
+   sets data-theme="dark" today — the light tokens above are the only
+   theme that ships. */
+:root[data-theme='dark'] {
+  --bg-page: #0b0d0c;
+  --bg-page-soft: #111412;
+  --surface-1: #171a18;
+  --surface-2: #1e221f;
+  --surface-glass: rgba(23, 26, 24, 0.86);
+
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --brand-600: #12a150;
+  --brand-500: #16b45b;
+  --brand-hero-gradient: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+  --brand-ink: #06130b;
+  --brand-soft-bg: rgba(22, 180, 91, 0.14);
+
+  --text-primary: #f2f5f3;
+  --text-secondary: #9aa59e;
+  --text-disabled: rgba(242, 245, 243, 0.45);
+  --text-on-hero: var(--brand-ink);
+
+  --status-agendado: #5b9cff;
+  --status-agendado-bg: rgba(91, 156, 255, 0.16);
+  --status-confirmado: #2fd16b;
+  --status-confirmado-bg: rgba(22, 180, 91, 0.18);
+  --status-cancelado: #ff6b6b;
+  --status-cancelado-bg: rgba(255, 107, 107, 0.16);
+  --status-realizado: #b7c4be;
+  --status-realizado-bg: rgba(154, 165, 158, 0.16);
+
+  --danger: #ff6b6b;
+  --danger-bg: rgba(255, 107, 107, 0.14);
+
+  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 24px 60px rgba(0, 0, 0, 0.5);
+  --shadow-brand: 0 14px 34px rgba(18, 161, 80, 0.3);
+  --focus-ring: 0 0 0 3px rgba(22, 180, 91, 0.5);
 }
 
 *,
@@ -76,11 +126,15 @@ body,
   min-height: 100%;
 }
 
+html {
+  color-scheme: light;
+}
+
 body {
   margin: 0;
   background:
-    radial-gradient(circle at 14% 0%, rgba(22, 180, 91, 0.1) 0, transparent 34%),
-    radial-gradient(circle at 100% 8%, rgba(18, 161, 80, 0.06) 0, transparent 30%),
+    radial-gradient(circle at 14% 0%, rgba(18, 161, 80, 0.07) 0, transparent 34%),
+    radial-gradient(circle at 100% 8%, rgba(10, 110, 54, 0.05) 0, transparent 30%),
     var(--bg-page);
   color: var(--text-primary);
   font-family: var(--font-sans);
@@ -89,6 +143,24 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
 }
 
 a {
