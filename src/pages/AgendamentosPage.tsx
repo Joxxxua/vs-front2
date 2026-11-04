@@ -521,9 +521,14 @@ export default function AgendamentosPage() {
             return (
               <article key={agendamento.id} className="appointment-card">
                 <header>
-                  <div>
-                    <p>{formatCompleteDate(agendamento.data)}</p>
-                    <strong>{getTipoNome(agendamento)}</strong>
+                  <div className="appointment-card-heading">
+                    <span className="appointment-card-icon" aria-hidden="true">
+                      <CalendarIcon width={18} height={18} />
+                    </span>
+                    <div>
+                      <strong>{getTipoNome(agendamento)}</strong>
+                      <p>{formatCompleteDate(agendamento.data)}</p>
+                    </div>
                   </div>
                   <StatusPill status={agendamento.status} />
                 </header>
